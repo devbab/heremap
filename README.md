@@ -1,28 +1,33 @@
-# HEREMAP-NODE
+# HEREMAP
 
-Set of node.js interfaces to HERE Maps REST APIs
+Set of NODE.js/browser interfaces to HERE Maps REST APIs
 
 ## Installation
 
- 1/ For use in Node.js
+ 1/ For use in Node.js, install the package:
+    
+    npm install --save-dep heremap
 
-    npm install --save-dep heremap-node
+then include in your js file
 
-2/ For use in browser through object heremap
+    const heremap = require("heremap");
 
-    browserify heremap.js --s heremap -o heremap-bundle.js
 
-and then add this line in your html file
+2/ For use in browser, add this line in your html file
 
-    <script src="heremap-bundle.js"></script>
+    <script src="http://www.unpkg.com/heremap"></script>
+
+You can then access the object like this:
+
+    const heremap = window.heremap;
 
 
 ## Config, Credentials
-    const heremap = require("heremap-node");
 
     // your own credentials, to be obtained from developer.here.com
-    // by default, it uses production environment you may specify useCIT:true to use CIT
-    // by default, it uses http. specify useHTTP:true to use http
+    // by default, it uses production environment. You may specify useCIT:true to use CIT
+    // by default, it uses https. You may specify useHTTP: true to use http
+
     heremap.config({
         app_id: "YOUR APP_ID", 
         app_code: "YOUR APP_CODE"
