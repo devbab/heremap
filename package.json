@@ -1,0 +1,34 @@
+{
+    "name": "heremap",
+    "version": "1.0.4",
+    "description": "node/browser interface to HERE Maps REST API",
+    "main": "heremap.js",
+    "scripts": {
+        "test": "node test/test.js",
+        "pretest": "eslint --ignore-path .gitignore .",
+        "build": "browserify ./heremap.js -s heremap -o umd/heremap.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/devbab/heremap.git"
+    },
+    "keywords": [
+        "HERE",
+        "Maps",
+        "node.js"
+    ],
+    "author": "devbab",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/devbab/heremap/issues"
+    },
+    "homepage": "https://github.com/devbab/heremap#readme",
+    "dependencies": {
+        "eyes": "^0.1.8",
+        "superagent": "^4.0.0"
+    },
+    "devDependencies": {
+        "eslint": "^5.9.0",
+        "eslint-config-strongloop": "^2.1.0"
+    }
+}
