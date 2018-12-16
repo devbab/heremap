@@ -1,11 +1,11 @@
 {
     "name": "heremap",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "description": "node/browser interface to HERE Maps REST API",
     "main": "heremap.js",
     "scripts": {
         "test": "node test/test.js",
-        "pretest": "eslint --ignore-path .gitignore .",
+        "pretest": "eslint --ignore-path .eslintignore .",
         "build": "browserify ./heremap.js -s heremap -o dist/heremap.js"
     },
     "repository": {
@@ -16,7 +16,10 @@
     "keywords": [
         "HERE",
         "Maps",
-        "node.js"
+        "node.js",
+        "geocode",
+        "isoline",
+        "routing"
     ],
     "author": "devbab",
     "license": "ISC",

@@ -18,7 +18,12 @@ function init(obj) {
     if (obj.useHTTP) protocol = "http://";
 }
 
-
+/**
+ * same as init
+ */
+function config(obj) {
+    init(obj);
+}
 /**
  * geocode an address
  * @param {string} address - address as string.
@@ -27,8 +32,6 @@ function init(obj) {
 async function geocode(address) {
     let tStart = new Date();
 
-    // eslint-disable-next-line   no-undef
-    /**/
     return new Promise(
         (resolve, reject) => {
             const settings = {
