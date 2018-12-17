@@ -1,6 +1,6 @@
 {
     "name": "heremap",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "description": "node/browser interface to HERE Maps REST API",
     "main": "heremap.js",
     "scripts": {
@@ -13,6 +13,10 @@
         "url": "git+https://github.com/devbab/heremap.git"
     },
     "unpkg": "dist/heremap.js",
+    "files": [
+        "heremap.js",
+        "dist/heremap.js"
+    ],
     "keywords": [
         "HERE",
         "Maps",
