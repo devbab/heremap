@@ -411,6 +411,7 @@ async function detour(start, stop, waypoints) {
 
 module.exports = {
     init: init,
+    config: config,
     geocode: geocode,
     reverseGeocode: reverseGeocode,
     matrix: matrix,

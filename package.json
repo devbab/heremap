@@ -1,22 +1,22 @@
 {
     "name": "heremap",
-    "version": "1.0.9",
+    "version": "1.0.10",
     "description": "node/browser interface to HERE Maps REST API",
     "main": "heremap.js",
-    "scripts": {
-        "test": "node test/test.js",
-        "pretest": "eslint --ignore-path .eslintignore .",
-        "build": "browserify heremap.js -s heremap |uglifyjs -c -o dist/heremap.min.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/devbab/heremap.git"
-    },
     "unpkg": "dist/heremap.min.js",
     "files": [
         "heremap.js",
         "dist/heremap.min.js"
     ],
+    "scripts": {
+        "test": "node test/test.js",
+        "pretest": "eslint --ignore-path .eslintignore .",
+        "build": "browserify   heremap.js -s heremap | uglifyjs -c -o dist/heremap.min.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/devbab/heremap.git"
+    },
     "keywords": [
         "HERE",
         "Maps",
@@ -32,7 +32,6 @@
     },
     "homepage": "https://github.com/devbab/heremap#readme",
     "dependencies": {
-        "eyes": "^0.1.8",
         "superagent": "^4.0.0"
     },
     "devDependencies": {

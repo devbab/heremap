@@ -1,6 +1,6 @@
 # HEREMAP
 
-Set of NODE.js/browser interfaces to HERE Maps REST APIs
+Set of Nodee.js/browser interfaces to HERE Maps REST APIs
 
 ## Installation
 
