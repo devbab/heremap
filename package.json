@@ -1,13 +1,13 @@
 {
     "name": "heremap",
-    "version": "2.0.2",
+    "version": "2.0.3",
     "description": "node/browser interface to HERE Maps REST API",
     "main": "heremap.js",
     "unpkg": "dist/heremap.min.js",
     "scripts": {
         "testnode": "node test/test.js",
         "test": "jest",
-        "pretest": "eslint --ignore-path .eslintignore .",
+        "eslint": "eslint --ignore-path .eslintignore .",
         "docs": "jsdoc2md   --template README.hbs --param-list-format list  --files heremap.js common.js map.js geocoding.js routing.js cluster.js    > README.md",
         "build": "browserify  -r heremap.js  common.js routing.js geocoding.js cluster.js  -s heremap | uglifyjs -c -o dist/heremap.min.js",
         "builddebug": "browserify  -r heremap.js  common.js map.js routing.js geocoding.js  cluster.js -s heremap -d -o dist/heremap.min.js",

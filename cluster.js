@@ -209,12 +209,12 @@ async function cluster(coords, opt, cb = null) {
 
             if (isCluster) {
                 let weigth = data.getWeight();
-                cb(ev, coord, null, weigth);
+                cb(ev, m.coordO2A(coord), null, weigth);
             }
 
             else {
                 let userData = data.getData(); // lat,lng, payload
-                cb(ev, coord, userData[2], 1);
+                cb(ev, m.coordO2A(coord), userData[2], 1);
             }
         });
     }

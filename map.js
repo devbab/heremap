@@ -1099,7 +1099,7 @@ async function locateMe(callback, opt) {
 
 
         //navigator.geolocation.getCurrentPosition(function pos(position) {
-        _locateMe = navigator.geolocation.watchPosition(function (position) {
+        _locateMe = navigator.geolocation.watchPosition((position) => {
             let gps = [position.coords.latitude, position.coords.longitude];
 
             layerEmpty("_gps");
@@ -1119,8 +1119,7 @@ async function locateMe(callback, opt) {
             });
 
             callback(gps, position.coords.accuracy);
-
-        }, function handleError(error) {
+        }, (error) => {
             let msg = "";
             switch (error.code) {
                 case error.PERMISSION_DENIED:
@@ -1138,8 +1137,9 @@ async function locateMe(callback, opt) {
             }
             let e = new Error("HTML5 location error:" + msg); // e.message
             throw (e);
-        },
-            { enableHighAccuracy: true }
+        }, {
+                enableHighAccuracy: true
+            }
         );
     }
     else {
@@ -1154,6 +1154,8 @@ function getMap() {
 }
 
 module.exports = {
+    coordO2A: coordO2A,
+    coordA2O: coordA2O,
     getMap: getMap,
     map: map,
     getAvailableMapStyle: getAvailableMapStyle,
@@ -1163,6 +1165,7 @@ module.exports = {
     layerDelete: layerDelete,
     layerEmpty: layerEmpty,
     buildIcon: buildIcon,
+    bubbleUnique: bubbleUnique,
     bubbleUniqueHide: bubbleUniqueHide,
     marker: marker,
     circle: circle,
