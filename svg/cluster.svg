@@ -1,0 +1,6 @@
+<svg width="48" height="48" 
+    xmlns="http://www.w3.org/2000/svg">
+    <ellipse ry="23.936819" rx="23.868169" id="svg_1" cy="23.978919" cx="24.086698" fill="{color}" fill-opacity="0.7" opacity="0.4" stroke="null"/>
+    <ellipse ry="14" rx="14" id="svg_1" cy="24" cx="24" fill="{color}" stroke="null"/>
+    <text fill="#ffffff" stroke-width="0" stroke-opacity="null" x="31.519209" y="31.572127" id="svg_2" font-size="18" font-family="Helvetica, Arial, sans-serif" text-anchor="middle" xml:space="preserve" transform="matrix(0.6885090470314024,0,0,0.7038813233375549,2.6708941152319303,5.431412808597086) " stroke="null">{text}</text>
+</svg>

@@ -1,0 +1,10 @@
+<svg width="33" height="33" 
+    xmlns="http://www.w3.org/2000/svg">
+
+    <g>
+        <line fill="none" stroke-width="1.5" x1="16" y1="0" x2="16" y2="12" id="svg_1" stroke-linejoin="undefined" stroke-linecap="undefined" stroke="{color}"/>
+        <line fill="none" stroke-width="1.5" x1="0" y1="16" x2="12" y2="16" id="svg_2" stroke-linejoin="undefined" stroke-linecap="undefined" stroke="{color}"/>
+        <line fill="none" stroke-width="1.5" x1="16" y1="20" x2="16" y2="33" id="svg_1" stroke-linejoin="undefined" stroke-linecap="undefined" stroke="{color}"/>
+        <line fill="none" stroke-width="1.5" x1="20" y1="16" x2="33" y2="16" id="svg_2" stroke-linejoin="undefined" stroke-linecap="undefined" stroke="{color}"/>
+    </g>
+</svg>

@@ -1,1 +1,6 @@
 dist/*.js
+lib/*.js
+demo/*.js
+test/*.js
+svg/*
+png/*

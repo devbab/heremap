@@ -1,0 +1,83 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Demo Japan/Korea/ROW</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+
+    <link rel="stylesheet" href="../css/heremap.css" type="text/css" />
+    <style type="text/css">
+        #map {
+            width: 100%;
+            height: 100%;
+            background: grey;
+        }
+    </style>
+
+</head>
+
+<body onload="_init();">
+
+    <table width="100%" height="600px" border="0">
+        <tr>
+            <td>
+                <br /> <br />
+
+                <label><input type="radio" name="scheme" value="normal.day.grey" checked="checked" />Rest Of World</label>
+                <label><input type="radio" name="scheme" value="japan" />Japan</label>
+                <label><input type="radio" name="scheme" value="korea" />Korea</label>
+                <br />
+                <br />
+
+                <div id="map"></div>
+            </td>
+        </tr>
+    </table>
+</body>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+
+<script src="../dist/libhere.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../dist/heremap.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="credentials.js" type="text/javascript" charset="utf-8"></script>
+
+<script language="javascript" type="text/javascript">
+
+    var hm = window.heremap;
+
+    function _init() {
+
+        hm.config({
+            app_id: APP_ID,
+            app_code: APP_CODE,
+        });
+
+        hm.map('map', {
+            zoom: 6,
+            center: [48.86, 2.3],
+            scheme: "normal.day.grey"
+        });
+
+
+        $('input[name="scheme"]').change(function () {
+            var scheme = $("input[name='scheme']:checked").val();
+            console.log("scheme", scheme);
+
+            hm.setScheme(scheme);
+            switch (scheme) {
+                case "japan": hm.setCenter([35.67598, 139.7635]); break;
+                case "korea": hm.setCenter([37.25839, 129.00317]); break;
+                case "normal.day.grey": hm.setCenter([48.86, 2.3]); break;
+
+            }
+
+        });
+
+    } // _init
+
+
+
+</script>
+
+</html>

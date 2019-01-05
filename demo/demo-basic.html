@@ -1,0 +1,78 @@
+<html>
+
+<head>
+    <title>HERE Generic map</title>
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+    <link rel="stylesheet" type="text/css" href="http://www.unpkg.com/heremap@2.0.1/css/heremap.css" />
+
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <!--  our business logic -->
+    <script src="http://www.unpkg.com/heremap@2.0.2/dist/libhere.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="http://www.unpkg.com/heremap@2.0.2/dist/heremap.min.js" type="text/javascript" charset="utf-8"></script>
+
+    <!--  where we just defined APP_ID and APP_CODE -->
+    <script src="credentials.js" type="text/javascript" charset="utf-8"></script>
+
+    <script>
+
+        var hm = window.heremap;
+
+        function initMap() {
+
+            //configure APP_ID and APP_CODE
+            hm.config({
+                app_id: APP_ID,
+                app_code: APP_CODE,
+            });
+
+            // show map fragment
+            // to see console message, open debugger window
+            hm.map(
+                "map", {
+                    zoom: 6,
+                    viewChange: (zoom, coord) => { console.log("viewchange", zoom, coord) },
+                    click: (coord, button, key) => { console.log("click", coord, button, key) },
+                    keydown: (key) => { console.log("key down", key) }
+                }
+            );
+
+        };
+
+        async function drawSomeStuff() {
+            // add a simple marker on Paris
+            hm.marker({
+                coord: [48.85, 2.3]
+            });
+
+            // show a route from lille to Bordeaux
+            const lille = await hm.geocode("lille, France");
+            const bordeaux = await hm.geocode("bordeaux, France");
+            hm.marker({
+                coord: lille.coord,
+                svg: "svg/default.svg",
+                color: "green",
+                size: "21x27"
+            });
+            hm.marker({
+                coord: bordeaux.coord,
+                svg: "svg/default.svg",
+                color: "red"
+            });
+            const route = await hm.route(lille.coord, bordeaux.coord);
+            hm.polyline({ coords: route.coords });
+        }
+
+        initMap();
+        drawSomeStuff();
+
+    </script>
+</body>
+
+
+</html>

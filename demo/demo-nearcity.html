@@ -1,0 +1,161 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Demo NearCity</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="../css/heremap.css" type="text/css" />
+
+    <style type="text/css">
+        #map {
+            width: 100%;
+            height: 100%;
+            background: grey;
+        }
+    </style>
+
+</head>
+
+<body onLoad="_init();">
+    <div class="row">
+        <div class="col-sm-3 pr-1">
+            <div class="shadow-sm p-2 mb-4 bg-light">
+
+                <h1 class="display-5 text-primary">Near City</h1>
+
+                <br />
+                <p class="h6 text-secondary">Left click on the map and see nearest city</p>
+
+                <br />
+                <label for="population">City Population:</label>
+                <input type="text" class="form-control form-control-sm" placeholder="City Population" id="population"
+                    size="2" value="250000" />
+                <br />
+                <label for="limit">#Results:</label>
+                <input type="text" class="form-control form-control-sm" placeholder="#Results" id="limit" size="2"
+                    value="3" />
+
+
+            </div>
+        </div>
+        <div class="col-sm-9 mx-0 px-0" id="map">
+        </div>
+    </div>
+
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+<script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
+
+
+<script src="https://www.unpkg.com/heremap@2.0.0/dist/libhere.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../dist/heremap.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="credentials.js" type="text/javascript" charset="utf-8"></script>
+
+
+<script language="javascript" type="text/javascript">
+
+    var hm = window.heremap;
+
+    function _init() {
+
+        hm.config({
+            app_id: APP_ID,
+            app_code: APP_CODE,
+        });
+
+        hm.map('map', {
+            scheme: "normal.day.grey",
+            zoom: 6,
+            clickLeft: process
+        });
+
+
+        hm.layerCreate("near");
+    } // _init
+
+    function process(coord) {
+        console.log("process");
+        var pop = $("#population").val();
+        var limit = $("#limit").val();
+
+        $.get("http://gserver.pampa.biz/nearcity/node/main", {
+            lat: coord[0],
+            lng: coord[1],
+            pop: pop,
+            limit: limit
+
+        }).done(
+            function (result) {
+                hm.layerEmpty("near");
+                console.log("coord", coord);
+
+                hm.marker({
+                    coord: coord,
+                    layer: "near",
+                });
+
+                result.forEach(res => {
+                    hm.marker({
+                        coord: [res.latitude, res.longitude],
+                        layer: "near",
+                        svg: "svg/text.svg",
+                        opt: {
+                            anchor: "125x25",
+                            color: "red",
+                            text: res.name
+                        }
+                    });
+
+                    hm.polyline({
+                        layer: "near",
+                        coords: [coord, [res.latitude, res.longitude]]
+                    });
+                });
+
+                for (let i = 0; i < result.length; i++) {
+                    let start = [result[i].latitude, result[i].longitude];
+                    let startName = result[i].name;
+
+                    for (let j = 0; j < result.length; j++) {
+                        if (j == i) continue;
+
+                        let middle = coord;
+                        let end = [result[j].latitude, result[j].longitude];
+                        let endName = result[j].name;
+                        let angle = computeAngle(start, middle, end);
+                        console.log(`angle ${startName} ^ ${endName}`, angle);
+                    }
+                }
+
+            });
+    }
+
+
+    function computeAngle(startPoint, midPoint, endPoint) {
+
+        // Rename to shorter variables
+        var A = [startPoint[1], startPoint[0]];
+        var O = [midPoint[1], midPoint[0]];
+        var B = [endPoint[1], endPoint[0]];  // from lat,lng to x,y
+
+        var azimuthAO = turf.bearing(A, O);
+        var azimuthBO = turf.bearing(B, O);
+        var angleAO = Math.abs(azimuthAO - azimuthBO);
+        if (angleAO > 180)
+            angleAO = 360 - angleAO;
+
+        // return azimuthAO + "," + azimuthBO;
+        return angleAO;
+    }
+</script>
+
+</html>
