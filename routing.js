@@ -1,5 +1,5 @@
 "use strict";
-const cm = require("common");
+const cm = require("./common.js");
 
 /**
  * compute a route with optional waypooints. [see more info on optional parameters] (http://documentation.developer.here.com/pdf/routing_hlp/7.2.100/Routing%20API%20v7.2.100%20Developer's%20Guide.pdf)

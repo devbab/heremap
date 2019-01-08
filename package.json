@@ -1,6 +1,6 @@
 {
     "name": "heremap",
-    "version": "2.0.3",
+    "version": "2.0.5",
     "description": "node/browser interface to HERE Maps REST API",
     "main": "heremap.js",
     "unpkg": "dist/heremap.min.js",
@@ -39,6 +39,9 @@
     "devDependencies": {
         "eslint": "^5.9.0",
         "eslint-config-strongloop": "^2.1.0",
-        "uglify-es": "^3.3.9"
+        "uglify-es": "^3.3.9",
+        "jest": "^23.6.0",
+        "jest-cli": "^23.6.0",
+        "puppeteer": "^1.11.0"
     }
 }

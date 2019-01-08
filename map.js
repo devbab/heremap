@@ -1,7 +1,7 @@
 /* global H, fetch, document, navigator, mapsjs, window APP_ID_JAPAN,APP_CODE_JAPAN,APP_ID_KOREA,APP_CODE_KOREA*/
 
 "use strict";
-const cm = require("common");
+const cm = require("./common.js");
 
 let _platform = null;
 let _provider = null;
@@ -34,6 +34,7 @@ function coordA2O(arr) {
  * @param opt {object}  - options
  * @param [opt.zoom=10] {number}  - zoom factor
  * @param [opt.center=[48.86, 2.3]] {Coord}  - Coord of the center
+ * @param [opt.scheme=normal.day.grey] {string}  - any scheme defined by HERE, plus "japan", "korea", "black", "white", "transparent". For japan/korea, one needs special credentials as APP_[ID|CODE]_JAPAN APP_[ID|CODE]_KOREA
  * @param [opt.click=null] {function()}  - callback on mouse click: callback(coord,button,key)
  * @param [opt.dbClick=null] {function()}  - callback on mouse double click: callback(coord,button,key)
  * @param [opt.clickLeft=null] {function}  - callback on mouse click left: callback(coord,button,key)
@@ -77,6 +78,12 @@ function map(htmlItem, opt) {
     let app_id = cm.getAppId();
     let app_code = cm.getAppCode();
 
+    if (!app_id || !app_code) {
+        console.log("app_id/app_code not initialised");
+        document.getElementById(htmlItem).innerHTML = "app_id/app_code not initialised";
+        return;
+    }
+
     _platform = new H.service.Platform({
         app_id: app_id,
         app_code: app_code,
@@ -88,7 +95,7 @@ function map(htmlItem, opt) {
     if (settings.scheme) _scheme = settings.scheme; // store scheme if defined
 
     _defaultLayers = _platform.createDefaultLayers();
-
+    console.log(_defaultLayers);
 
     // http://heremaps.github.io/examples/explorer.html#map-tiles__base-map-styles-and-modes
     _provider = new H.map.provider.ImageTileProvider({
@@ -96,9 +103,10 @@ function map(htmlItem, opt) {
         descr: "",
         min: 0,
         max: 20,
+        crossOrigin: "anonymous",
         getURL: function (col, row, level) {
             mps++; if (mps > 4) mps = 1;
-            let url = ["http://", mps, ".base.maps.cit.api.here.com/maptile/", "2.1",
+            let url = [cm.getProtocol(), "//", mps, ".base.maps" + cm.getCIT() + ".api.here.com/maptile/", "2.1",
                 "/", "maptile", "/", "newest", "/",
                 _scheme, "/", level, "/", col, "/", row, "/", "256",
                 "/", "png", "?lg=", "FRE",
@@ -106,8 +114,7 @@ function map(htmlItem, opt) {
                 app_id].join("");
 
             if (_scheme == "japan")
-                url = ["https://",
-                    "m.lbs.cit.api.heremaps.jp/v1/map?app_id=",
+                url = [cm.getProtocol(), "//", "m.lbs" + cm.getCIT() + ".api.heremaps.jp/v1/map?app_id=",
                     APP_ID_JAPAN,
                     "&app_code=",
                     APP_CODE_JAPAN,
@@ -119,11 +126,19 @@ function map(htmlItem, opt) {
                     row].join("");
 
             else if (_scheme == "korea")
-                url = ["https://3.base.maps.cit.api.heremaps.kr/maptile/2.1/maptile/34439348c3/normal.day/",
+                url = [cm.getProtocol(), "//", "3.base.maps" + cm.getCIT() + ".api.heremaps.kr/maptile/2.1/maptile/34439348c3/normal.day/",
                     "/", level, "/", col, "/", row, "/", "256",
                     "/", "png", "?lg=", "FRE",
                     "&app_code=", APP_CODE_KOREA, "&app_id=",
                     APP_ID_KOREA].join("");
+
+            else if (_scheme == "black")
+                url = cm.getHome() + "png/black.png";
+            else if (_scheme == "white")
+                url = cm.getHome() + "png/white.png";
+            else if (_scheme == "transparent")
+                url = cm.getHome() + "png/transparent.png";
+
 
             if (settings.loadTile)
                 settings.loadTile(level, col, row, url);
@@ -136,6 +151,7 @@ function map(htmlItem, opt) {
 
     let __layer = new H.map.layer.TileLayer(_provider);
 
+    //console.log("normal map");
     //Step 2: initialize a HEREMap 
     _map = new H.Map(document.getElementById(htmlItem),
         __layer, {
@@ -143,28 +159,29 @@ function map(htmlItem, opt) {
             zoom: settings.zoom
         });
 
-
-    var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(_map));
+    let behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(_map));
 
     // Create the default UI components
     _ui = H.ui.UI.createDefault(_map, _defaultLayers);
 
-
     // create default layer
     layerCreate("default");
+    
+    _map.addEventListener("",function() {
+
+    })
 
     // if callback on zoom Change
     if (settings.viewChange) {
         _map.addEventListener("mapviewchangeend", function () {
-            var bound = _map.getViewBounds();
-            var lat = (bound.ka + bound.ja) / 2;
-            var lng = (bound.ga + bound.ha) / 2;
+            let bound = _map.getViewBounds();
+            let lat = (bound.ka + bound.ja) / 2;
+            let lng = (bound.ga + bound.ha) / 2;
 
             //console.log("viewChange center " + lat + " " + lng);
             settings.viewChange(_map.getZoom(), [lat, lng]);
         });
     }
-
 
     /***********************           to handle keyboard while mouse in map        ***********************/
     let kup = function () {
@@ -205,7 +222,7 @@ function map(htmlItem, opt) {
         if (target instanceof H.map.Marker) return; // don't do anything if click on marker
 
         let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
-        var button = ev.currentPointer.button;
+        let button = ev.currentPointer.button;
         if (settings.dbClick != "") {
             switch (button) {
                 case 0: settings.dbClick(coordO2A(coord), "left", _key);
@@ -222,8 +239,8 @@ function map(htmlItem, opt) {
 
         if (target instanceof H.map.Marker) return;
 
-        var coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
-        var button = ev.currentPointer.button;
+        let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
+        let button = ev.currentPointer.button;
 
         if ((button == 0) && (settings.clickLeft))
             settings.clickLeft(coordO2A(coord), "left", _key);
@@ -253,7 +270,7 @@ function map(htmlItem, opt) {
         if (target instanceof mapsjs.map.Marker) {
             behavior.enable();
             if (typeof target.dragged !== "undefined") {
-                var coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
+                let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
                 (target.dragged)(target, coordO2A(coord));
             }
         }
@@ -261,7 +278,7 @@ function map(htmlItem, opt) {
 
     /***********************  Listen to the drag event and move the position of the marker as necessary *******************/
     _map.addEventListener("drag", function (ev) {
-        var target = ev.target,
+        let target = ev.target,
             pointer = ev.currentPointer;
         if (target instanceof mapsjs.map.Marker) {
             target.setPosition(_map.screenToGeo(pointer.viewportX, pointer.viewportY));
@@ -387,11 +404,11 @@ function setCenter(coord) {
  * @returns {coord} coord of the center as \[lat,lng\]
  */
 function getCenter() {
-    var bound = _map.getViewBounds();
+    let bound = _map.getViewBounds();
     //_HM.log("viewbound",bound);
 
-    var lng = (bound.ga + bound.ha) / 2;
-    var lat = (bound.ka + bound.ja) / 2;
+    let lng = (bound.ga + bound.ha) / 2;
+    let lat = (bound.ka + bound.ja) / 2;
     return [lat, lng];
 
 }
@@ -402,7 +419,7 @@ function getCenter() {
  * @returns {Object} bouding box of visible part of the map, as \[latm,latM,longm,lngM\]
  */
 function getViewBB() {
-    var bb = _map.getViewBounds();
+    let bb = _map.getViewBounds();
 
     let bb2 = {
         latm: bb.ja,
@@ -416,33 +433,40 @@ function getViewBB() {
 /**
  * sets bouding box to be displayed
  * @alias hm:setViewBB
- * @param opt {Object}  object specifying how to set bounding box
+ * @param opt {Object| string}  either an object specifying how to set bounding box, or  a String being the name of a layer
  * @param [opt.layer] {string} bouding box aroud all objects of the layer
  * @param [opt.pois] {array} bouding box aroud all coords defined as \[coord,coord...\]
  * @example
  * ```js
-  * hm.setViewBB({
- *    layer: "layer1"
- * });
+  * hm.setViewBB("layer1");
+ *
+ * hm.setViewBB({
+    *    pois: coords
+    * });
  *  ```
  */
 function setViewBB(opt) {
 
-    var settings = {
-        polyline: null,
+    if (typeof opt == "string")
+        opt = { layer: opt };
+
+    let settings = {
         layer: null,
         pois: null // array of [lat,lng]
     };
     Object.assign(settings, opt);
 
     let bbox;
+
     //set BB based on layer
     if (settings.layer) {
-        var layer = layerFind(opt);
+        let layer = layerFind(settings.layer);
         if (!layer) return;
 
-        // get view bound and add a bit around
+        // get view bound and add a bit around, like 1/5
         let bb = layer.getBounds();
+        if (!bb) // as if nothing in layer
+            return;
         bb.latm = bb.ja;
         bb.latM = bb.ka;
         bb.lngm = bb.ga;
@@ -460,11 +484,8 @@ function setViewBB(opt) {
 
     }
 
-    else if (settings.polyline)
-        _map.setViewBounds(settings.polyline.getBounds(), true);
-
     else if (settings.pois) {
-        var bb = {
+        let bb = {
             latM: 0,
             lngm: 180,
             latm: 90,
@@ -549,7 +570,7 @@ function setZoom(zoom) {
  *  ```
  */
 async function buildIcon(opt) {
-    var settings = {
+    let settings = {
         img: null,             //   png, jpg. if not http in the beginning, look locally
         svg: null,             // svg file:  is a url or a string
         opt: null,              // size, color, anchor, text...s
@@ -569,7 +590,7 @@ async function buildIcon(opt) {
         if (settings.img.substr(0, 4) == "http") // url
             iconSrc = settings.img;
         else
-            iconSrc = "http:" + settings.img; // local file
+            iconSrc = cm.getProtocol() + settings.img; // local file
 
     }
     else if (settings.svg) {
@@ -592,7 +613,7 @@ async function buildIcon(opt) {
                 });
     }
 
-    let iconOpt = {};
+    let iconOpt = { crossOrigin: true }; // to avoid issued with capture
     if (settings.opt && settings.opt.size) {
         let w, h;
         if (typeof settings.opt.size == "number")
@@ -681,7 +702,7 @@ async function buildIcon(opt) {
 *  ```
  */
 async function marker(opt) {
-    var settings = {
+    let settings = {
         layer: "default",       //  layer in which to add marker
         coord: null,            //  coord of the marker
         img: null,             //  image can be url, png, jpg..
@@ -734,8 +755,8 @@ async function marker(opt) {
     if (settings.pointerEnter) {
         marker.addEventListener("pointerenter", function (ev) {
 
-            var target = ev.target;
-            var coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
+            let target = ev.target;
+            let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
             settings.pointerEnter(target, coordO2A(coord), ev);
 
         });
@@ -744,8 +765,8 @@ async function marker(opt) {
     /************  callback when click on marker *****************************/
     if (settings.pointerClick) {
         marker.addEventListener("tap", function (ev) {
-            var target = ev.target;
-            var coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
+            let target = ev.target;
+            let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
             settings.pointerClick(target, coordO2A(coord), ev);
 
         });
@@ -755,9 +776,9 @@ async function marker(opt) {
     if (settings.bubble) {
         marker.addEventListener("tap", function (ev) {
 
-            var target = ev.target;
-            var data = target.getData();
-            var coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
+            let target = ev.target;
+            let data = target.getData();
+            let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
 
             bubbleUnique(coordO2A(coord), data);
         });
@@ -769,7 +790,7 @@ async function marker(opt) {
 } //end of marker
 
 /**
- * display a unique bubble
+ * display a unique bubble. Associated CSS style is .H_ib_body
  * @alias hm:bubbleUnique
  * @param {Array} coord of the bubble
  * @param {String} txt html text to display
@@ -843,7 +864,7 @@ function bubbleUniqueHide() {
     *  ```
  */
 function polyline(opt) {
-    var settings = {
+    let settings = {
         layer: "default",
         coords: null, // coords is list of array of [lat,lng] or array of object with {lat:,lng:}
         style: {
@@ -860,7 +881,7 @@ function polyline(opt) {
 
     Object.assign(settings, opt);
 
-    var layer = layerFind(settings.layer);
+    let layer = layerFind(settings.layer);
     if (!layer) {
         let e = new Error("layer not found:" + settings.layer); // e.message
         throw (e);
@@ -871,13 +892,13 @@ function polyline(opt) {
         throw (e);
     }
 
-    var strip = new H.geo.Strip();
+    let strip = new H.geo.Strip();
 
     settings.coords.forEach(function (point) {
         strip.pushLatLngAlt(point[0], point[1]);
     });
 
-    var polyline = new H.map.Polyline(strip, {
+    let polyline = new H.map.Polyline(strip, {
         style: settings.style,
         data: settings.data,
         arrows: settings.arrows
@@ -890,20 +911,20 @@ function polyline(opt) {
 
     if (settings.pointerEnter)
         polyline.addEventListener("pointerenter", function (ev) {
-            var target = ev.target;
-            var coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
+            let target = ev.target;
+            let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
             settings.pointerEnter(target, coordO2A(coord), ev);
         });
     if (settings.pointerLeave)
         polyline.addEventListener("pointerleave", function (ev) {
-            var target = ev.target;
-            var coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
+            let target = ev.target;
+            let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
             settings.pointerLeave(target, coordO2A(coord), ev);
         });
     if (settings.pointerClick)
         polyline.addEventListener("tap", function (ev) {
-            var target = ev.target;
-            var coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
+            let target = ev.target;
+            let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
             settings.pointerClick(target, coordO2A(coord), ev);
         });
 
@@ -919,7 +940,7 @@ function polyline(opt) {
  * @param {Object} opt  options to draw a polygon. Same options as hm.polyline
  */
 function polygon(opt) {
-    var settings = {
+    let settings = {
         layer: "default",
         coords: "", // coords is array of [lat,lng] or array of {lat:,lng:}
         style: {
@@ -937,7 +958,7 @@ function polygon(opt) {
     };
     Object.assign(settings, opt);
 
-    var layer = layerFind(settings.layer);
+    let layer = layerFind(settings.layer);
     if (!layer) {
         let e = new Error("layer not found:" + settings.layer); // e.message
         throw (e);
@@ -953,7 +974,7 @@ function polygon(opt) {
         strip.pushLatLngAlt(point[0], point[1]);
     });
 
-    var polygon = new H.map.Polygon(strip, {
+    let polygon = new H.map.Polygon(strip, {
         style: settings.style,
         data: settings.data,
         arrows: settings.arrows
@@ -966,34 +987,34 @@ function polygon(opt) {
     // si un style de hover
     if (settings.styleHover) {
         polygon.addEventListener("pointerenter", function (ev) {
-            var target = ev.target;
+            let target = ev.target;
             target.setStyle(settings.styleHover);
         });
         polygon.addEventListener("pointerleave", function (ev) {
-            var target = ev.target;
+            let target = ev.target;
             target.setStyle(settings.style);
         });
     }
 
     if (settings.pointerEnter)
         polygon.addEventListener("pointerenter", function (ev) {
-            var target = ev.target;
-            var data = target.getData();
-            var coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
+            let target = ev.target;
+            let data = target.getData();
+            let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
             settings.pointerEnter(target, coordO2A(coord), ev, data);
         });
     if (settings.pointerLeave)
         polygon.addEventListener("pointerleave", function (ev) {
-            var target = ev.target;
-            var data = target.getData();
-            var coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
+            let target = ev.target;
+            let data = target.getData();
+            let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
             settings.pointerLeave(target, coordO2A(coord), ev, data);
         });
     if (settings.pointerClick)
         polygon.addEventListener("tap", function (ev) {
-            var target = ev.target;
-            var data = target.getData();
-            var coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
+            let target = ev.target;
+            let data = target.getData();
+            let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
             settings.pointerClick(target, coordO2A(coord), ev, data);
         });
 
@@ -1015,7 +1036,7 @@ function polygon(opt) {
  * @param [opt.style.fillColor] {string} fill color
  */
 function circle(opt) {
-    var settings = {
+    let settings = {
         layer: "default",
         coord: null,
         radius: 100, // meters
@@ -1028,7 +1049,7 @@ function circle(opt) {
     };
     Object.assign(settings, opt);
 
-    var layer = layerFind(settings.layer);
+    let layer = layerFind(settings.layer);
     if (!layer) {
         let e = new Error("layer not found:" + settings.layer); // e.message
         throw (e);
@@ -1149,14 +1170,60 @@ async function locateMe(callback, opt) {
 }
 
 
+/**
+ * perform a screenshot of the map and returns a promise with the data
+ * @async
+ * @alias hm:locateMe
+ * @param opt {object} options for screenshot
+ * @param [opt.name] {string} filename for download
+ * @param [opt.ui] {boolean} true to save ui (scale, etc..)
+ * @param opt {object} options for screenshot
+ * 
+ * @returns {data} binary data of image
+ * 
+ */
+function screenshot(opt) {
+    let para = null;
+    if (opt && opt.ui)
+        para = [_ui];
+
+    return new Promise(
+        (resolve, reject) => {
+            _map.capture(function (canvas) {
+                if (!canvas)
+                    return reject("Map screenshot not supported");
+
+                let dataURL = canvas.toDataURL();
+
+                if (opt && opt.name) {
+                    let a = document.createElement('a');
+                    a.href = dataURL;
+                    a.target = '_blank';
+                    a.download = opt.name;
+                    document.body.appendChild(a);
+                    a.click();
+                }
+                resolve(dataURL);
+
+
+            }, para);
+        });
+}
+
+
 function getMap() {
     return _map;
+}
+
+function getUI() {
+    return _ui;
 }
 
 module.exports = {
     coordO2A: coordO2A,
     coordA2O: coordA2O,
     getMap: getMap,
+    getUI: getUI,
     map: map,
     getAvailableMapStyle: getAvailableMapStyle,
     setScheme: setScheme,
@@ -1177,7 +1244,8 @@ module.exports = {
     setZoom: setZoom,
     getviewBB: getViewBB,
     setViewBB: setViewBB,
-    locateMe: locateMe
+    locateMe: locateMe,
+    screenshot: screenshot
 
 };
 

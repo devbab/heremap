@@ -8,7 +8,7 @@ const request = require("superagent");
 let APP_ID = process.env.APP_ID;
 let APP_CODE = process.env.APP_CODE;
 let CIT = ""; // production by default
-let PROTOCOL = "https://"; // by default
+let PROTOCOL = "https:"; // by default
 let _useHTTPS = true; // by default
 let _home = ".";
 
@@ -16,11 +16,11 @@ let _home = ".";
 // find out where we are and relative position for png/svg files
 // pay attention if library is build in ./dist
 if (process.browser) {
-    var _script = document.getElementsByTagName("script"),
-        _file = _script[_script.length - 1].src,
-        _path = _file.substring(0, _file.lastIndexOf("/"));
+    let _script = document.getElementsByTagName("script");
+    let _file = _script[_script.length - 1].src;
+    let _path = _file.substring(0, _file.lastIndexOf("/"));
 
-    _home = _path + "/../";
+    _home = _path + "/../"; // a bit dirty but ...
 }
 
 /**
@@ -47,11 +47,11 @@ function config(opt) {
     if (opt.app_code) APP_CODE = opt.app_code;
     if (opt.useCIT) CIT = ".cit";
     if (opt.useHTTP) {
-        PROTOCOL = "http://";
+        PROTOCOL = "http:";
         _useHTTPS = false;
     }
     if (opt.useHTTPS) {
-        PROTOCOL = "https://";
+        PROTOCOL = "https:";
         _useHTTPS = true;
     }
 }
@@ -140,7 +140,7 @@ function addCredentials(...obj) {
  * @return {string} full url
  */
 function buildUrl(base, endpoint) {
-    return PROTOCOL + base + CIT + "." + endpoint;
+    return PROTOCOL + "//" + base + CIT + "." + endpoint;
 }
 
 /**

@@ -103,7 +103,7 @@ Then in your JS script:
 svg files can be created with <a href="https://editor.method.ac/">https://editor.method.ac/</a></p>
 </dd>
 <dt><a href="#hm_bubbleUnique">hm:bubbleUnique(coord, txt)</a></dt>
-<dd><p>display a unique bubble</p>
+<dd><p>display a unique bubble. Associated CSS style is .H_ib_body</p>
 </dd>
 <dt><a href="#hm_bubbleUniqueHide">hm:bubbleUniqueHide()</a></dt>
 <dd><p>hide a unique bubble</p>
@@ -119,6 +119,9 @@ svg files can be created with <a href="https://editor.method.ac/">https://editor
 </dd>
 <dt><a href="#hm_locateMe">hm:locateMe(callback, opt)</a></dt>
 <dd><p>watch position on HTML5 position. requires HTTPS</p>
+</dd>
+<dt><a href="#hm_locateMe">hm:locateMe(opt, opt)</a> ⇒ <code>data</code></dt>
+<dd><p>perform a screenshot of the map and returns a promise with the data</p>
 </dd>
 <dt><a href="#hm_geocode">hm:geocode(address)</a> ⇒ <code>Object</code></dt>
 <dd><p>geocode an address</p>
@@ -173,6 +176,7 @@ create a map area within the specified item
 - opt <code>object</code> - options
     - [.zoom] <code>number</code> <code> = 10</code> - zoom factor
     - [.center] <code>Coord</code> <code> = [48.86, 2.3]</code> - Coord of the center
+    - [.scheme] <code>string</code> <code> = &quot;normal.day.grey&quot;</code> - any scheme defined by HERE, plus "japan", "korea", "black", "white", "transparent". For japan/korea, you need special credentials as APP_[ID|CODE]_JAPAN APP_[ID|CODE]_KOREA
     - [.click] <code>function</code> <code> = </code> - callback on mouse click: callback(coord,button,key)
     - [.dbClick] <code>function</code> <code> = </code> - callback on mouse double click: callback(coord,button,key)
     - [.clickLeft] <code>function</code> <code> = </code> - callback on mouse click left: callback(coord,button,key)
@@ -275,12 +279,12 @@ sets bouding box to be displayed
 **Kind**: global function  
 **Params**
 
-- opt <code>Object</code> - object specifying how to set bounding box
+- opt <code>Object</code> | <code>string</code> - either an object specifying how to set bounding box, or  a String being the name of a layer
     - [.layer] <code>string</code> - bouding box aroud all objects of the layer
     - [.pois] <code>array</code> - bouding box aroud all coords defined as \[coord,coord...\]
 
 **Example**  
-```jshm.setViewBB({   layer: "layer1"}); ```
+```jshm.setViewBB("layer1");hm.setViewBB({   pois: coords}); ```
 <a name="hm_getZoom"></a>
 
 ## hm:getZoom() ⇒ <code>number</code>
@@ -339,11 +343,11 @@ add a marker in a layersvg files can be created with https://editor.method.ac/
     - .dragged <code>function</code> - if dragged, callback(target,coord)
 
 **Example**  
-```jshm.marker({   coord: [48.8,2.3],});hm.marker({   img: "http://whatever.com/image.png",   coord: [48.8,2.3]});hm.marker({   coord: [48.8,2.3],   data:"Hello world",   bubble: true});hm.marker({   coord: [48.8,2.3],    draggable:true,   dragged: function(target,coord) {console.log("dragged to",coord);}}); ```
+```jshm.marker({   coord: [48.8,2.3],});hm.marker({  svg: "svg/marker.svg",  color:"red",  size:16});hm.marker({   img: "http://whatever.com/image.png",   coord: [48.8,2.3]});hm.marker({   coord: [48.8,2.3],   data:"Hello world",   bubble: true});hm.marker({   coord: [48.8,2.3],   draggable:true,   dragged: function(target,coord) {console.log("dragged to",coord);}}); ```
 <a name="hm_bubbleUnique"></a>
 
 ## hm:bubbleUnique(coord, txt)
-display a unique bubble
+display a unique bubble. Associated CSS style is .H_ib_body
 
 **Kind**: global function  
 **Params**
@@ -425,6 +429,20 @@ watch position on HTML5 position. requires HTTPS
         - [.lineWidth] <code>number</code> - width of line of circle
         - [.fillColor] <code>String</code> - fill color of circle representing accuracy area
 
+<a name="hm_locateMe"></a>
+
+## hm:locateMe(opt, opt) ⇒ <code>data</code>
+perform a screenshot of the map and returns a promise with the data
+
+**Kind**: global function  
+**Returns**: <code>data</code> - binary data of image  
+**Params**
+
+- opt <code>object</code> - options for screenshot
+    - [.name] <code>string</code> - filename for download
+    - [.ui] <code>boolean</code> - true to save ui (scale, etc..)
+- opt <code>object</code> - options for screenshot
+
 <a name="hm_geocode"></a>
 
 ## hm:geocode(address) ⇒ <code>Object</code>
@@ -455,7 +473,7 @@ reverse geocode a coordinate
 compute a route with optional waypooints. [see more info on optional parameters] (http://documentation.developer.here.com/pdf/routing_hlp/7.2.100/Routing%20API%20v7.2.100%20Developer's%20Guide.pdf)
 
 **Kind**: global function  
-**Returns**: <code>object</code> - returns { summary: object, route: object, body:object }  
+**Returns**: <code>object</code> - returns { summary: object, coords:array,route: object, body:object}. coords is array of coord, to be used with hm.polyline.  
 **Params**
 
 - source <code>object</code> - source as \[lat,lng\]. Can be array of \[lat,lng\] to define waypoints
