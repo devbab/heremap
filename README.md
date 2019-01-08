@@ -176,7 +176,7 @@ create a map area within the specified item
 - opt <code>object</code> - options
     - [.zoom] <code>number</code> <code> = 10</code> - zoom factor
     - [.center] <code>Coord</code> <code> = [48.86, 2.3]</code> - Coord of the center
-    - [.scheme] <code>string</code> <code> = &quot;normal.day.grey&quot;</code> - any scheme defined by HERE, plus "japan", "korea", "black", "white", "transparent". For japan/korea, you need special credentials as APP_[ID|CODE]_JAPAN APP_[ID|CODE]_KOREA
+    - [.scheme] <code>string</code> <code> = &quot;normal.day.grey&quot;</code> - any scheme defined by HERE, plus "japan", "korea", "black", "white", "transparent". For japan/korea, one needs special credentials as APP_[ID|CODE]_JAPAN APP_[ID|CODE]_KOREA
     - [.click] <code>function</code> <code> = </code> - callback on mouse click: callback(coord,button,key)
     - [.dbClick] <code>function</code> <code> = </code> - callback on mouse double click: callback(coord,button,key)
     - [.clickLeft] <code>function</code> <code> = </code> - callback on mouse click left: callback(coord,button,key)
@@ -316,6 +316,7 @@ create an icon, to be used for a marker
     - [.svg] <code>string</code> - url a svg. This can be an inline svg, a url, or a svg from heremap
     - [.opt] <code>object</code> - style object
         - [.size] <code>number</code> | <code>string</code> - size of icon, as 24 or 24x32
+        - [.ratio] <code>number</code> - for svg files, ratio of size. 0.5 = half
         - [.anchor] <code>number</code> | <code>string</code> - anchor of icon, as 24 or 24x32. By default, bottom-center
         - [.tag] <code>string</code> - for svg, any tag like{tag}. will be replaced by associated value
 

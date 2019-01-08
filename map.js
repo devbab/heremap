@@ -166,8 +166,8 @@ function map(htmlItem, opt) {
 
     // create default layer
     layerCreate("default");
-    
-    _map.addEventListener("",function() {
+
+    _map.addEventListener("", function () {
 
     })
 
@@ -533,6 +533,7 @@ function setZoom(zoom) {
  * @param [opt.svg] {string}  url a svg. This can be an inline svg, a url, or a svg from heremap
  * @param [opt.opt] {object}   style object
  * @param [opt.opt.size] {number|string}   size of icon, as 24 or 24x32
+ * @param [opt.opt.ratio] {number}   for svg files, ratio of size. 0.5 = half
  * @param [opt.opt.anchor] {number|string}   anchor of icon, as 24 or 24x32. By default, bottom-center
  * @param [opt.opt.tag] {string}   for svg, any tag like{tag}. will be replaced by associated value
  * @return {H.map.Icon} the created icon
@@ -622,6 +623,18 @@ async function buildIcon(opt) {
             [w, h] = settings.opt.size.split("x");
 
         iconOpt.size = { w: w, h: h };
+    }
+    if (settings.svg && settings.opt && settings.opt.ratio) {
+        let w = null, h = null, match = null;
+
+        let r = /width="(\d+)"/;
+        match = iconSrc.match(r);
+        if (match) w = match[1];
+
+        r = /height="(\d+)"/;
+        match = iconSrc.match(r);
+        if (match) h = match[1];
+        iconOpt.size = { w: Math.floor(w * settings.opt.ratio), h: Math.floor(h * settings.opt.ratio) };
     }
 
     if (settings.opt && settings.opt.anchor) {
@@ -730,6 +743,7 @@ async function marker(opt) {
     // these parameters can be in opt.opt or directly in opt
     if (settings.color) settings.opt.color = settings.color;
     if (settings.size) settings.opt.size = settings.size;
+    if (settings.ratio) settings.opt.ratio = settings.ratio;
     if (settings.anchor) settings.opt.size = settings.anchor;
 
     let markerOpt = null;

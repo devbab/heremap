@@ -45,7 +45,7 @@ describe('DEMO Tests', async () => {
         expect.assertions(1);
 
         await page.goto('https://devbab/GitHub/heremap/demo/demo-nearcity.html');
-        await page.waitFor(4000);
+        await page.waitFor(5000);
         await page.mouse.click(500, 400, { button: 'left' })
         await page.waitFor(4000);
 
