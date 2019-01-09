@@ -2,7 +2,7 @@
 const cm = require("./common.js");
 
 /**
- * compute a route with optional waypooints. [see more info on optional parameters] (http://documentation.developer.here.com/pdf/routing_hlp/7.2.100/Routing%20API%20v7.2.100%20Developer's%20Guide.pdf)
+ * compute a route with optional waypooints. [See more info on optional parameters](http://documentation.developer.here.com/pdf/routing_hlp/7.2.100/Routing%20API%20v7.2.100%20Developer's%20Guide.pdf)
  *  @async
  * @alias hm:route
  * @param {object} source - source as \[lat,lng\]. Can be array of \[lat,lng\] to define waypoints
@@ -71,7 +71,7 @@ async function route(source, dest, opt) {
 
 
 /**
- * compute an isoline. [see more info on optional parameters] (http://documentation.developer.here.com/pdf/routing_hlp/7.2.100/Routing%20API%20v7.2.100%20Developer's%20Guide.pdf)
+ * compute an isoline. [See more info on optional parameters](http://documentation.developer.here.com/pdf/routing_hlp/7.2.100/Routing%20API%20v7.2.100%20Developer's%20Guide.pdf)
  * @async
  * @alias hm:isoline
  * @param opt {object} option for isoline
@@ -125,9 +125,9 @@ async function isoline(opt) {
 
 
 /**
- * compute a matrix. [see more info on optional parameters] (http://documentation.developer.here.com/pdf/routing_hlp/7.2.100/Routing%20API%20v7.2.100%20Developer's%20Guide.pdf)
+ * compute a matrix. [See more info on optional parameters](http://documentation.developer.here.com/pdf/routing_hlp/7.2.100/Routing%20API%20v7.2.100%20Developer's%20Guide.pdf)
  * 
- * Matrix size is limited to 1x100,100X1 or 15*N
+ * Matrix size is limited to 1x100, 100x1 or 15xN
  *  @async
  * @alias hm:matrix
  * @param source {object} source as \[lat,lng\]. Can be array of \[lat,lng\]

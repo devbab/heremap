@@ -1,0 +1,206 @@
+<html>
+
+<head>
+    <title>HERE Demo markers</title>
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+    <link rel="stylesheet" type="text/css" href="http://www.unpkg.com/heremap@2.0.5/css/heremap.css" />
+    <style>
+        .H_ib_body {
+    color:#fff;          
+    background:rgb(40, 149, 182);  
+    font-size: 0.6em; 
+    width: 250px; 
+}
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <!--  our business logic -->
+    <script src="http://www.unpkg.com/heremap@2.0.5/dist/libhere.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../dist/heremap.min.js" type="text/javascript" charset="utf-8"></script>
+
+    <!--  convenient way to define APP_ID and APP_CODE and bnot expose it to the whole world... -->
+    <script src="credentials.js" type="text/javascript" charset="utf-8"></script>
+
+    <script>
+
+        var hm = window.heremap;
+
+        let latm = 48.8;
+        let lngm = -10;
+        let lngM = -9.5;
+        let step = 0.1;
+
+        let pos = [latm, lngm];
+
+        function coord() {
+            pos[1] += step;
+            if (pos[1] > lngM) {
+                pos[1] = lngm;
+                pos[0] += step;
+            }
+            return pos;
+        }
+
+        function initMap() {
+
+            //configure APP_ID and APP_CODE
+            hm.config({
+                app_id: APP_ID,
+                app_code: APP_CODE,
+            });
+
+            // show map fragment
+            // to see console message, open debugger window
+            hm.map(
+                "map", {
+                    center: [latm, (lngm + lngM) / 2],
+                    zoom: 10
+                }
+            );
+
+        };
+
+        async function drawSomeStuff() {
+
+
+            hm.polyline([[latm, lngm], [latm, lngM]]);
+            hm.polyline({ coords: [[latm + step, lngm], [latm + step, lngM]] });
+            hm.polyline({ coords: [[latm + 2 * step, lngm], [latm + 2 * step, lngM]] });
+
+            // add a simple marker on Paris
+            hm.marker({
+                coord: pos,
+                bubble: true,
+                data: "no option"
+            });
+            hm.marker({
+                coord: coord(),
+                svg: "svg/default.svg",
+                color: "green",
+                size: "21x27",
+                bubble: true,
+                data: "__OPT__"
+            });
+            hm.marker({
+                coord: coord(),
+                svg: "svg/default.svg",
+                color: "red",
+                ratio: 2,
+                bubble: true,
+                data: "__OPT__"
+            });
+
+            hm.marker({
+                coord: coord(),
+                svg: "svg/bluedot.svg",
+                bubble: true,
+                data: "__OPT__"
+            });
+
+            hm.marker({
+                coord: coord(),
+                svg: "svg/cluster.svg",
+                color: "yellow",
+                text: "Hey",
+                anchor: 24, // initial size is 48x48
+                bubble: true,
+                data: "__OPT__"
+            });
+
+            hm.marker({
+                coord: coord(),
+                svg: "svg/cluster2.svg",
+                color: "brown",
+                text: "Hey",
+                ratio: 0.4,
+                anchor: 40, // size of 200 with ratio 0.4 => 80x80, middle is 40
+                bubble: true,
+                data: "__OPT__"
+            });
+
+
+            hm.marker({
+                coord: coord(),
+                svg: "svg/crosshair.svg",
+                color: "black",
+                bubble: true,
+                anchor: "center",
+                data: "__OPT__"
+            });
+            hm.marker({
+                coord: coord(),
+                svg: "svg/flag.svg",
+                bubble: true,
+                color: "yellow",
+                data: "__OPT__"
+            });
+            hm.marker({
+                coord: coord(),
+                svg: "svg/flag2.svg",
+                bubble: true,
+                color: "red",
+                anchor: "25x44",
+                data: "__OPT__"
+            });
+
+            hm.marker({
+                coord: coord(),
+                svg: "svg/flag3.svg",
+                bubble: true,
+                color: "green",
+                data: "__OPT__"
+            });
+
+            hm.marker({
+                coord: coord(),
+                svg: "svg/marker.svg",
+                bubble: true,
+                color: "purple",
+                data: "__OPT__"
+            });
+
+            hm.marker({
+                coord: coord(),
+                img: "png/blue_MarkerA.png",
+                bubble: true,
+                data: "__OPT__"
+            });
+            hm.marker({
+                coord: coord(),
+                img: "png/paleblue_MarkerG.png",
+                bubble: true,
+                data: "__OPT__"
+            });
+            hm.marker({
+                coord: coord(),
+                img: "png/darkgreen_MarkerH.png",
+                size: "10x17",
+                bubble: true,
+                data: "__OPT__"
+            });
+
+            hm.marker({
+                coord: coord(),
+                svg: "svg/iconfinder.svg",
+                color: "green",
+                bubble: true,
+                data: "__OPT__"
+            });
+
+
+
+        }
+
+        initMap();
+        drawSomeStuff();
+
+    </script>
+</body>
+
+
+</html>

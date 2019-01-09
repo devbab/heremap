@@ -1,5 +1,10 @@
-/* global document */
 "use strict";
+/* global document */
+
+/**
+ * @file generic function of heremap
+ * @author devbab
+ */
 
 const request = require("superagent");
 

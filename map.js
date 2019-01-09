@@ -1,5 +1,10 @@
 /* global H, fetch, document, navigator, mapsjs, window APP_ID_JAPAN,APP_CODE_JAPAN,APP_ID_KOREA,APP_CODE_KOREA*/
 
+/**
+ * @file manages map display on a web canvas
+ * @author devbab
+ */
+
 "use strict";
 const cm = require("./common.js");
 
@@ -8,13 +13,14 @@ let _provider = null;
 let _defaultLayers = null;
 let _ui = null;
 let _map = null;
+let _behavior = null;
 let group = null;
 let _layers = []; // list all layers
 let _key = {};     // keys  
 let _bubbleMarker = null;     // bubble de mamrker
 let _scheme = "normal.day.grey";
 let _locateMe = null;         // id when locate is active
-
+let _htmlItem = null;             //the html item on which to put the map
 
 
 function coordO2A(obj) {
@@ -61,6 +67,8 @@ function coordA2O(arr) {
 */
 function map(htmlItem, opt) {
 
+    _htmlItem = htmlItem;
+
     let settings = {
         zoom: 10,
         center: [48.86, 2.3],
@@ -79,7 +87,7 @@ function map(htmlItem, opt) {
     let app_code = cm.getAppCode();
 
     if (!app_id || !app_code) {
-        console.log("app_id/app_code not initialised");
+        // console.log("app_id/app_code not initialised");
         document.getElementById(htmlItem).innerHTML = "app_id/app_code not initialised";
         return;
     }
@@ -95,7 +103,6 @@ function map(htmlItem, opt) {
     if (settings.scheme) _scheme = settings.scheme; // store scheme if defined
 
     _defaultLayers = _platform.createDefaultLayers();
-    console.log(_defaultLayers);
 
     // http://heremaps.github.io/examples/explorer.html#map-tiles__base-map-styles-and-modes
     _provider = new H.map.provider.ImageTileProvider({
@@ -159,17 +166,13 @@ function map(htmlItem, opt) {
             zoom: settings.zoom
         });
 
-    let behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(_map));
+    _behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(_map));
 
     // Create the default UI components
     _ui = H.ui.UI.createDefault(_map, _defaultLayers);
 
     // create default layer
     layerCreate("default");
-
-    _map.addEventListener("", function () {
-
-    })
 
     // if callback on zoom Change
     if (settings.viewChange) {
@@ -246,7 +249,7 @@ function map(htmlItem, opt) {
             settings.clickLeft(coordO2A(coord), "left", _key);
         if ((button == 2) && (settings.clickRight))
             settings.clickRight(coordO2A(coord), "right", _key);
-        if (settings.click != "") {
+        if (settings.click) {
             switch (button) {
                 case 0: settings.click(coordO2A(coord), "left", _key);
                     break;
@@ -260,7 +263,7 @@ function map(htmlItem, opt) {
     _map.addEventListener("dragstart", function (ev) {
         let target = ev.target;
         if (target instanceof H.map.Marker) {
-            behavior.disable();
+            _behavior.disable();
         }
     }, false);
 
@@ -268,7 +271,7 @@ function map(htmlItem, opt) {
     _map.addEventListener("dragend", function (ev) {
         let target = ev.target;
         if (target instanceof mapsjs.map.Marker) {
-            behavior.enable();
+            _behavior.enable();
             if (typeof target.dragged !== "undefined") {
                 let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
                 (target.dragged)(target, coordO2A(coord));
@@ -515,7 +518,7 @@ function getZoom() {
 
 /**
  * set zoom level
- * @alias heremap:setZoom
+ * @alias hm:setZoom
  * @param {number} zoom 
  */
 function setZoom(zoom) {
@@ -534,7 +537,7 @@ function setZoom(zoom) {
  * @param [opt.opt] {object}   style object
  * @param [opt.opt.size] {number|string}   size of icon, as 24 or 24x32
  * @param [opt.opt.ratio] {number}   for svg files, ratio of size. 0.5 = half
- * @param [opt.opt.anchor] {number|string}   anchor of icon, as 24 or 24x32. By default, bottom-center
+ * @param [opt.opt.anchor] {number|string}   anchor of icon, as 24 or "24x32" or "center". By default, bottom-center
  * @param [opt.opt.tag] {string}   for svg, any tag like{tag}. will be replaced by associated value
  * @return {H.map.Icon} the created icon
  * @example 
@@ -547,7 +550,7 @@ function setZoom(zoom) {
  * hm.buildIcon({
  *    svg: "http://whatever.com/image.svg",
  *    opt: {
- *       size:24,
+ *       ratio:0.5,
  *       anchor:24x32
  *    }
  * });
@@ -591,7 +594,7 @@ async function buildIcon(opt) {
         if (settings.img.substr(0, 4) == "http") // url
             iconSrc = settings.img;
         else
-            iconSrc = cm.getProtocol() + settings.img; // local file
+            iconSrc = cm.getHome() + settings.img; // local file
 
     }
     else if (settings.svg) {
@@ -624,9 +627,9 @@ async function buildIcon(opt) {
 
         iconOpt.size = { w: w, h: h };
     }
-    if (settings.svg && settings.opt && settings.opt.ratio) {
-        let w = null, h = null, match = null;
 
+    function _getsizeSvg(iconSrc) {
+        let w = null, h = null, match;
         let r = /width="(\d+)"/;
         match = iconSrc.match(r);
         if (match) w = match[1];
@@ -634,15 +637,31 @@ async function buildIcon(opt) {
         r = /height="(\d+)"/;
         match = iconSrc.match(r);
         if (match) h = match[1];
+        return [w, h];
+    }
+
+    if (settings.svg && settings.opt && settings.opt.ratio) {
+        let w = null, h = null;
+        [w, h] = _getsizeSvg(iconSrc);
+
         iconOpt.size = { w: Math.floor(w * settings.opt.ratio), h: Math.floor(h * settings.opt.ratio) };
     }
 
     if (settings.opt && settings.opt.anchor) {
-        let w, h;
+        let w = null, h = null;
         if (typeof settings.opt.anchor == "number")
             w = h = settings.opt.anchor;
+        else if (settings.opt.anchor == "center" && settings.svg) {  // for svg file only center: get size of split in 2
+            [w, h] = _getsizeSvg(iconSrc);
+            w /= 2; h /= 2;
+        }
         else
             [w, h] = settings.opt.anchor.split("x");
+
+        if (!w || !h) {
+            let e = new Error("BuildIcon: incorrect anchor"); // e.message
+            throw (e);
+        }
         iconOpt.anchor = new H.math.Point(w, h);
     }
 
@@ -693,7 +712,7 @@ async function buildIcon(opt) {
  * hm.marker({
     *   svg: "svg/marker.svg",
     *   color:"red",
-    *   size:16
+    *   ratio:0.5
     * });
     * 
  * hm.marker({
@@ -744,7 +763,7 @@ async function marker(opt) {
     if (settings.color) settings.opt.color = settings.color;
     if (settings.size) settings.opt.size = settings.size;
     if (settings.ratio) settings.opt.ratio = settings.ratio;
-    if (settings.anchor) settings.opt.size = settings.anchor;
+    if (settings.anchor) settings.opt.anchor = settings.anchor;
 
     let markerOpt = null;
     if (settings.img || settings.svg) {
@@ -762,8 +781,17 @@ async function marker(opt) {
 
     if (settings.dragged) marker.dragged = settings.dragged;
 
-    if (settings.data)
-        marker.setData(settings.data);
+    if (settings.data) {
+        let data = settings.data;
+        if (settings.data == "__OPT__") {
+            data = settings;
+            delete data.coord;
+            for (let p in data)
+                if (!data[p]) delete data[p];
+            data = JSON.stringify(data, null, 2).replace(/\n/g, "<br/>");
+        }
+        marker.setData(data);
+    }
 
     // get click from mouse
     if (settings.pointerEnter) {
@@ -893,6 +921,9 @@ function polyline(opt) {
         pointerLeave: null // call back
     };
 
+    if (Array.isArray(opt)) // directement les coord
+        opt = { coords: opt };
+
     Object.assign(settings, opt);
 
     let layer = layerFind(settings.layer);
@@ -970,6 +1001,8 @@ function polygon(opt) {
         pointerEnter: null, // call back
         pointerLeave: null // call back
     };
+    if (Array.isArray(opt)) // directement les coord
+        opt = { coords: opt };
     Object.assign(settings, opt);
 
     let layer = layerFind(settings.layer);
@@ -1113,10 +1146,9 @@ async function locateMe(callback, opt) {
 
         let settings = {
             position: {
-                svg: "svg/crosshair.svg",
+                svg: "svg/target.svg",
                 color: "black",
-                size: 24,
-                anchor: 12
+                anchor: "center"
             },
             accuracy: {
                 strokeColor: "rgba(0, 128, 0, 0.8)", // Color of the perimeter
@@ -1172,9 +1204,7 @@ async function locateMe(callback, opt) {
             }
             let e = new Error("HTML5 location error:" + msg); // e.message
             throw (e);
-        }, {
-                enableHighAccuracy: true
-            }
+        }, { enableHighAccuracy: true }
         );
     }
     else {
@@ -1187,10 +1217,10 @@ async function locateMe(callback, opt) {
 /**
  * perform a screenshot of the map and returns a promise with the data
  * @async
- * @alias hm:locateMe
+ * @alias hm:screenshot
  * @param opt {object} options for screenshot
  * @param [opt.name] {string} filename for download
- * @param [opt.ui] {boolean} true to save ui (scale, etc..)
+ * @param [opt.ui] {boolean} true to ui (scale, etc..) in screenshot
  * @param opt {object} options for screenshot
  * 
  * @returns {data} binary data of image
@@ -1200,7 +1230,6 @@ function screenshot(opt) {
     let para = null;
     if (opt && opt.ui)
         para = [_ui];
-
     return new Promise(
         (resolve, reject) => {
             _map.capture(function (canvas) {
@@ -1208,26 +1237,31 @@ function screenshot(opt) {
                     return reject("Map screenshot not supported");
 
                 let dataURL = canvas.toDataURL();
-
                 if (opt && opt.name) {
-                    let a = document.createElement('a');
+                    let a = document.createElement("a");
                     a.href = dataURL;
-                    a.target = '_blank';
+                    a.target = "_blank";
                     a.download = opt.name;
                     document.body.appendChild(a);
                     a.click();
                 }
                 resolve(dataURL);
-
-
             }, para);
         });
 }
 
 
+function getMapHtmlItem() {
+    return _htmlItem;
+}
+
 function getMap() {
     return _map;
 }
+function getBehavior() {
+    return _behavior;
+}
+
 
 function getUI() {
     return _ui;
@@ -1238,6 +1272,8 @@ module.exports = {
     coordA2O: coordA2O,
     getMap: getMap,
     getUI: getUI,
+    getBehavior: getBehavior,
+    getMapHtmlItem: getMapHtmlItem,
     map: map,
     getAvailableMapStyle: getAvailableMapStyle,
     setScheme: setScheme,

@@ -2,6 +2,7 @@ node_modules/
 test/credentials.js
 test/__image_snapshots__/
 demo/.vscode/
-png/
 lib/
 demo/credentials.js
+test.js
+jsdoc/

@@ -8,7 +8,6 @@ const cm = require("./common.js");
 
 /**
  * geocode an address
- * @async
  * @alias hm:geocode
  * @param {string} address - address as string
  * @returns {Object} returns  {coord,body}. coord is geocode as \[lat,lng\]. body is full json answer
@@ -19,7 +18,7 @@ const cm = require("./common.js");
  * console.log (res.coord);
  * ```
  */
-async function geocode(address) {
+function geocode(address) {
 
     const settings = cm.addCredentials({
         searchText: address
@@ -43,12 +42,11 @@ async function geocode(address) {
 
 /**
  * reverse geocode a coordinate
- * @async
  * @alias hm:reverseGeocode
  * @param {Coord} coord - coord \[lat,lng\] to reverse geocode
  * @returns {object} returns { location:object, address:object, body:object}. 
  */
-async function reverseGeocode(coord) {
+function reverseGeocode(coord) {
 
     const settings = cm.addCredentials({
         mode: "retrieveAddresses",

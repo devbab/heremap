@@ -24,6 +24,20 @@ describe('DEMO Tests', async () => {
     }, 60000);
 
 
+    test('demo-markers', async () => {
+        const browser = await puppeteer.launch({ headless: true });
+        const page = await browser.newPage();
+        expect.assertions(1);
+
+        await page.goto('https://devbab/GitHub/heremap/demo/demo-markers.html');
+        await page.waitFor(5000);
+
+        const screenshot = await page.screenshot();
+        expect(screenshot).toMatchImageSnapshot({ customDiffConfig: diffConfig });
+        await browser.close()
+
+    }, 60000);
+
     test('demo-cluster', async () => {
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
