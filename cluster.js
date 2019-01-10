@@ -15,8 +15,8 @@ let clusterLayer = null;
  * @param opt {object} options for cluster
  * @param [opt.minZoom] {number} min zoom for cluster to be visible
  * @param [opt.maxZoom] {number} max zoom for cluster to be visible
- * @param [opt.noise] {array} graphic to represent stand-alone point. format: [url,size]
- * @param [opt.clusterIcon] {string} url of svg file representing a cluster
+ * @param [opt.noise] {array} graphic to represent stand-alone point. format: [url,size]. Anchor will be bottom-center
+ * @param [opt.clusterIcon] {string} url of svg file representing a cluster. Anchor will be middle of icon
  * @param [opt.style] {object} define for each minium aggregation level the color and size of the icon. See example
  * @param {function} cb callback to be called if click on item. Format cb(event, coord, payload, weigth). 
  * `coord` is coord of icon
@@ -134,7 +134,7 @@ async function cluster(coords, opt, cb = null) {
         let key = color + "-" + weight + "-" + size;
         if (typeof cacheIcon[key] == "undefined") {
             let svg = svgCluster.replace("{text}", weight).replace(/{color}/g, color);
-            cacheIcon[key] = new H.map.Icon(svg, { size: { w: size, h: size } });
+            cacheIcon[key] = new H.map.Icon(svg, { size: { w: size, h: size }, anchor: { w: size / 2, h: size / 2 } });
         }
 
         // create a marker for the Cluster

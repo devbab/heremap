@@ -157,7 +157,7 @@ svg files can be created with <a href="https://editor.method.ac/">https://editor
 <dd><p>set zoom level</p>
 </dd>
 <dt><a href="#hm_touch">hm:touch(onoff, options)</a></dt>
-<dd><p>activate touch, allowing hand drawing</p>
+<dd><p>activate touch, allowing hand drawing, with embedded simplification of the line</p>
 </dd>
 </dl>
 
@@ -570,7 +570,7 @@ set zoom level
 <a name="hm_touch"></a>
 
 ## hm:touch(onoff, options)
-activate touch, allowing hand drawing
+activate touch, allowing hand drawing, with embedded simplification of the line
 
 **Kind**: global function  
 **Params**
@@ -579,8 +579,8 @@ activate touch, allowing hand drawing
 - options <code>object</code> - options  to control the touch behaviour
     - [.callback] <code>function</code> - calling callback(coords) when touch ends
     - [.layer] <code>string</code> - layer where to put the drawing
-    - [.style] <code>object</code> - drawing style
-    - [.arrow] <code>object</code> - arrow style
+    - [.style] <code>object</code> - drawing style for the line
+    - [.arrow] <code>object</code> - arrow style for the line
     - [.tolerance] <code>number</code> <code> = 4</code> - tolerance for simplification
     - [.keep] <code>boolean</code> <code> = false</code> - keep graphic or not when calling callback
 

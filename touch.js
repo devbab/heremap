@@ -26,14 +26,14 @@ function behaviorEnable(onoff) {
     }
 }
 /**
- * activate touch, allowing hand drawing
+ * activate touch, allowing hand drawing, with embedded simplification of the line
  * @alias hm:touch
  * @param onoff {boolean}  activate or deactivate
  * @param options {object} options  to control the touch behaviour
  * @param [options.callback] {function} calling callback(coords) when touch ends
  * @param [options.layer] {string} layer where to put the drawing
- * @param [options.style] {object} drawing style
- * @param [options.arrow] {object} arrow style
+ * @param [options.style] {object} drawing style for the line
+ * @param [options.arrow] {object} arrow style for the line
  * @param [options.tolerance=4] {number} tolerance for simplification
  * @param [options.keep=false] {boolean} keep graphic or not when calling callback
  */

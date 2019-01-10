@@ -4,15 +4,25 @@ expect.extend({ toMatchImageSnapshot });
 
 // https://www.npmjs.com/package/jest-image-snapshot
 const diffConfig = { threshold: 0.5 }; // 0.5% difference is OK
+var browser, page;
 
+(async () => {
+    console.log("launching chromium");
+    browser = await puppeteer.launch();
+    page = await browser.newPage();
+})();
 
-describe('DEMO Tests', async () => {
+describe('DEMO tests', async () => {
 
+    beforeAll(async () => {
+        console.log("beforeAll");
+        browser = await puppeteer.launch();
+        page = await browser.newPage();
+
+    });
 
     test('demo-basic', async () => {
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
-
+        console.log("demo-basic");
         expect.assertions(1);
 
         await page.goto('https://devbab/GitHub/heremap/demo/demo-basic.html');
@@ -20,13 +30,12 @@ describe('DEMO Tests', async () => {
 
         const screenshot = await page.screenshot();
         expect(screenshot).toMatchImageSnapshot({ customDiffConfig: diffConfig });
-        await browser.close()
     }, 60000);
 
+    console.log("in between");
 
     test('demo-markers', async () => {
-        const browser = await puppeteer.launch({ headless: true });
-        const page = await browser.newPage();
+        console.log("demo-markers");
         expect.assertions(1);
 
         await page.goto('https://devbab/GitHub/heremap/demo/demo-markers.html');
@@ -34,27 +43,21 @@ describe('DEMO Tests', async () => {
 
         const screenshot = await page.screenshot();
         expect(screenshot).toMatchImageSnapshot({ customDiffConfig: diffConfig });
-        await browser.close()
-
     }, 60000);
 
-    test('demo-cluster', async () => {
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
-
-        expect.assertions(1);
-
-        await page.goto('https://devbab/GitHub/heremap/demo/demo-cluster.html');
-        await page.waitFor(10000);
-        const screenshot = await page.screenshot();
-        expect(screenshot).toMatchImageSnapshot({ customDiffConfig: diffConfig });
-        await browser.close()
-
-    }, 60000);
+    console.log("That's it folks");
 
 
+    afterAll(() => {
+        console.log("afterAll");
+        browser.close();
 
+    }, 1000);
 });
+
+
+
+
 
 
 

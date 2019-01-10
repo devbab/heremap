@@ -4,7 +4,7 @@
     "description": "node/browser interface to HERE Maps REST API",
     "main": "heremap.js",
     "unpkg": "dist/heremap.min.js",
-    "source": "heremap.js common.js map.js routing.js geocoding.js cluster.js touch.js",
+    "source": "heremap.js common.js map.js routing.js geocoding.js cluster.js touch.js autocomplete.js",
     "scripts": {
         "test": "jest",
         "eslint": "eslint --ignore-path .eslintignore .",

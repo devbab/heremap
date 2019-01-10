@@ -359,18 +359,22 @@ function layerDelete(name) {
     if (!layer)
         return;
 
-    layer.name = null;
+    // remove group from map
     _map.removeObject(layer);
+    //remove form list of layers
+    _layers = _layers.filter(item => { return item.name !== name; });
 }
 
 /**
- * Empty a layer, actually deletes it and recreate it
+ * Empty a layer,
  * @alias hm:layerEmpty
  * @param {string} layer 
  */
 function layerEmpty(name) {
-    layerDelete(name);
-    layerCreate(name);
+    let layer = layerFind(name);
+    if (!layer)
+        return;
+    layer.removeAll();
 }
 
 
@@ -691,7 +695,7 @@ async function buildIcon(opt) {
  * svg files can be created with https://editor.method.ac/ 
  * @async
  * @alias hm:marker
- * @param opt {object} options to create the marker
+ * @param opt {object} options to create the marker, can be a coord directly
  * @param [opt.layer] {string}   layer name
  * @param [opt.coord] {coord}   coord of the marker as \[lat,lng\]
  * @param [opt.icon] {string}   created from hm.buildIcon
@@ -705,6 +709,8 @@ async function buildIcon(opt) {
  * @param {function} opt.dragged  if dragged, callback(target,coord)
  * @example 
  * ```js
+ * hm.marker([48.8,2.3]);
+ *
  * hm.marker({
  *    coord: [48.8,2.3],
  * });
@@ -748,6 +754,10 @@ async function marker(opt) {
         draggable: false,       //  icon is draggalbe
         dragged: null           //  callback(target,coord)
     };
+
+    // can pass directly only the coord
+    if (Array.isArray(opt))
+        opt.coord = opt;
 
     Object.assign(settings, opt);
 

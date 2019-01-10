@@ -157,7 +157,7 @@ function buildUrl(base, endpoint) {
  * @param  {string} mode=get - mode "get" or "post"
  * @return {promise} - promise to resolve/reject
  */
-async function hereRest(url, settings, mode = "get") {
+async function hereRest(url, settings, mode = "get", needresp = "true") {
 
     let p = request.get(url);
     if (mode == "post")
@@ -172,8 +172,7 @@ async function hereRest(url, settings, mode = "get") {
                 throw (e);
             }
 
-
-            if (!res.body.Response && !res.body.response) { // one of the two should be in the answer
+            if (needresp && !res.body.Response && !res.body.response) { // one of the two should be in the answer
                 console.error(res.body);
                 let e = new Error("Query error:" + res.body); // e.message
                 throw (e);
