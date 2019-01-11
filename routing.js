@@ -3,7 +3,6 @@ const cm = require("./common.js");
 
 /**
  * compute a route with optional waypooints. [See more info on optional parameters](http://documentation.developer.here.com/pdf/routing_hlp/7.2.100/Routing%20API%20v7.2.100%20Developer's%20Guide.pdf)
- *  @async
  * @alias hm:route
  * @param {object} source - source as \[lat,lng\]. Can be array of \[lat,lng\] to define waypoints
  * @param {object} dest - dest as \[lat,lng\]. Can be array of \[lat,lng\] to define waypoints
@@ -11,7 +10,7 @@ const cm = require("./common.js");
  * @param [opt.mode=fastest;car;traffic:disabled] {string}  routing mode
  * @param [opt.routeattributes=waypoints,summary,shape] {string}  route attributes
  * @param [opt.maneuverattributes=direction,action] {string}  manoeuver attributes
- * @returns {object} returns { summary: object, coords:array,route: object, body:object}. coords is array of coord, to be used with hm.polyline. 
+ * @returns {Promise} returns { summary: object, coords:array,route: object, body:object}. coords is array of coord, to be used with hm.polyline. 
  *
  * @example
   * ```js
@@ -25,7 +24,7 @@ const cm = require("./common.js");
   * console.log (res.summary); 
   * ```
  */
-async function route(source, dest, opt) {
+function route(source, dest, opt) {
 
     const settings = {
         mode: "fastest;car;traffic:disabled",
@@ -72,8 +71,7 @@ async function route(source, dest, opt) {
 
 /**
  * compute an isoline. [See more info on optional parameters](http://documentation.developer.here.com/pdf/routing_hlp/7.2.100/Routing%20API%20v7.2.100%20Developer's%20Guide.pdf)
- * @async
- * @alias hm:isoline
+  * @alias hm:isoline
  * @param opt {object} option for isoline
  * @param [opt.start] {coord} coord for starting point of isoline
  * @param [opt.destination] {coord} coord for destination point of isoline
@@ -82,9 +80,9 @@ async function route(source, dest, opt) {
  * @param [opt.mode="fastest;car;traffic:disabled"] {String} routing mode
  * @param [opt.linkattributes=sh] {String} attributes to be returned
  * 
- * @returns {object}  returns { poly:array, body:object }. Poly is array of coords, body is full answer
+ * @returns {Promise}  returns { poly:array, body:object }. Poly is array of coords, body is full answer
  */
-async function isoline(opt) {
+function isoline(opt) {
 
     const settings = {
         start: null,                            // for direct isoline
@@ -128,15 +126,14 @@ async function isoline(opt) {
  * compute a matrix. [See more info on optional parameters](http://documentation.developer.here.com/pdf/routing_hlp/7.2.100/Routing%20API%20v7.2.100%20Developer's%20Guide.pdf)
  * 
  * Matrix size is limited to 1x100, 100x1 or 15xN
- *  @async
- * @alias hm:matrix
+  * @alias hm:matrix
  * @param source {object} source as \[lat,lng\]. Can be array of \[lat,lng\]
  * @param dest {object} dest as \[lat,lng\]. Can be array of \[lat,lng\]
  * @param opt {object} additional optional parameters like  mode, summaryAttributes
  * @param [opt.mode="fastest;car;traffic:enabled"] {string} routing mode to compute matrix
  * @param [opt.summaryAttributes="tt,di"] {string} attributes in the answer
  * 
- * @returns {object} { entries: object, body:object }. entries is the array of {start,stop} information. body is full json answer
+ * @returns {Promise} { entries: object, body:object }. entries is the array of {start,stop} information. body is full json answer
  * @example
  * ```js
  * const res = await hm.matrix({
@@ -147,7 +144,7 @@ async function isoline(opt) {
  * ```
  */
 
-async function matrix(source, dest, opt) {
+function matrix(source, dest, opt) {
 
     var settings = {
         mode: "fastest;car;traffic:enabled",
@@ -186,7 +183,7 @@ async function matrix(source, dest, opt) {
  * @param start {coord}  starting point for route
  * @param stop {coord}   destination point of route
  * @param waypoints {array}  list of watypoints to test 
- * @returns {object} returns {reference,waypoints:[ {coord,distA,timeA,distB,timeB}]}
+ * @returns {Promise} returns {reference: {start, stop, distance, distance2, time, time2} ,waypoints:[ {coord, distA, timeA, distB, timeB}]}
  */
 async function detour(start, stop, waypoints) {
     // eslint-disable-next-line   no-undef

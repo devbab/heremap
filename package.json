@@ -1,10 +1,10 @@
 {
     "name": "heremap",
-    "version": "2.0.6",
+    "version": "2.0.7",
     "description": "node/browser interface to HERE Maps REST API",
     "main": "heremap.js",
     "unpkg": "dist/heremap.min.js",
-    "source": "heremap.js common.js map.js routing.js geocoding.js cluster.js touch.js autocomplete.js",
+    "source": "heremap.js common.js map.js routing.js geocoding.js cluster.js touch.js place.js",
     "scripts": {
         "test": "jest",
         "eslint": "eslint --ignore-path .eslintignore .",

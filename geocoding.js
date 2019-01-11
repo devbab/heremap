@@ -9,8 +9,8 @@ const cm = require("./common.js");
 /**
  * geocode an address
  * @alias hm:geocode
- * @param {string} address - address as string
- * @returns {Object} returns  {coord,body}. coord is geocode as \[lat,lng\]. body is full json answer
+ * @param address {string}  address as string
+ * @returns  {Promise}   {coord,body}. coord is geocode as \[lat,lng\]. body is full json answer
  * 
  * @example
  * ```js
@@ -43,8 +43,8 @@ function geocode(address) {
 /**
  * reverse geocode a coordinate
  * @alias hm:reverseGeocode
- * @param {Coord} coord - coord \[lat,lng\] to reverse geocode
- * @returns {object} returns { location:object, address:object, body:object}. 
+ * @param coord {Coord}  - coord \[lat,lng\] to reverse-geocode
+ * @returns  {Promise} returns { location:object, address:object, body:object}. 
  */
 function reverseGeocode(coord) {
 

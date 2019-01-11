@@ -52,13 +52,17 @@ Then in your JS script:
 
 ## Demo
 
-See under directory demo:
+See under directory [demo](demo):
 
 - [demo-basic.html](demo/demo-basic.html): how to display a simple map in a web pgae
 - [demo-cluster.html](demo/demo-cluster.html): how to cluster thousands of points on a map
+- [demo-markers.html](demo/demo-markers.html): different kind of svg or png markers, with different size, anchor..
 - [demo-screenshot.html](demo/demo-screenshot.html): how to do a screenshot of the map
 - [demo-asia.html](demo/demo-asia.html): how to display high quality ap in Japan and Korea. (requires special credentials)
-
+- [demo-autocomplete.html](demo/demo-autocomplete.html): autocomplete exemple
+- [demo-touch.html](demo/demo-touch.html): draw polyline on a touch screen
+- [demo-nearcity.html](demo/demo-nearcity.html): find  big cities around the mouse click
+ 
 
 
 ## Functions
@@ -82,10 +86,10 @@ See under directory demo:
 <dt><a href="#hm_config">hm:config(opt)</a></dt>
 <dd><p>To configure app_id, app_code and optionally use CIT and http</p>
 </dd>
-<dt><a href="#hm_detour">hm:detour(start, stop, waypoints)</a> ⇒ <code>object</code></dt>
+<dt><a href="#hm_detour">hm:detour(start, stop, waypoints)</a> ⇒ <code>Promise</code></dt>
 <dd><p>Compute the detour for each waypoint provided, compared to normal route from A to B</p>
 </dd>
-<dt><a href="#hm_geocode">hm:geocode(address)</a> ⇒ <code>Object</code></dt>
+<dt><a href="#hm_geocode">hm:geocode(address)</a> ⇒ <code>Promise</code></dt>
 <dd><p>geocode an address</p>
 </dd>
 <dt><a href="#hm_getAvailableMapStyle">hm:getAvailableMapStyle()</a> ⇒ <code>json</code></dt>
@@ -100,7 +104,7 @@ See under directory demo:
 <dt><a href="#hm_getZoom">hm:getZoom()</a> ⇒ <code>number</code></dt>
 <dd><p>return zoom value</p>
 </dd>
-<dt><a href="#hm_isoline">hm:isoline(opt)</a> ⇒ <code>object</code></dt>
+<dt><a href="#hm_isoline">hm:isoline(opt)</a> ⇒ <code>Promise</code></dt>
 <dd><p>compute an isoline. <a href="http://documentation.developer.here.com/pdf/routing_hlp/7.2.100/Routing%20API%20v7.2.100%20Developer&#39;s%20Guide.pdf">See more info on optional parameters</a></p>
 </dd>
 <dt><a href="#hm_layerCreate">hm:layerCreate(name, visible)</a></dt>
@@ -110,7 +114,7 @@ See under directory demo:
 <dd><p>delete a layer</p>
 </dd>
 <dt><a href="#hm_layerEmpty">hm:layerEmpty(layer)</a></dt>
-<dd><p>Empty a layer, actually deletes it and recreate it</p>
+<dd><p>Empty a layer,</p>
 </dd>
 <dt><a href="#hm_layerFind">hm:layerFind(name)</a></dt>
 <dd><p>find layer by its name or return null</p>
@@ -125,9 +129,13 @@ See under directory demo:
 <dd><p>add a marker in a layer
 svg files can be created with <a href="https://editor.method.ac/">https://editor.method.ac/</a></p>
 </dd>
-<dt><a href="#hm_matrix">hm:matrix(source, dest, opt)</a> ⇒ <code>object</code></dt>
+<dt><a href="#hm_matrix">hm:matrix(source, dest, opt)</a> ⇒ <code>Promise</code></dt>
 <dd><p>compute a matrix. <a href="http://documentation.developer.here.com/pdf/routing_hlp/7.2.100/Routing%20API%20v7.2.100%20Developer&#39;s%20Guide.pdf">See more info on optional parameters</a></p>
 <p>Matrix size is limited to 1x100, 100x1 or 15xN</p>
+</dd>
+<dt><a href="#hm_placeAutoSuggest">hm:placeAutoSuggest(opt)</a> ⇒ <code>Promise</code></dt>
+<dd><p>Place AutoSuggest
+@ async</p>
 </dd>
 <dt><a href="#hm_polygon">hm:polygon(opt)</a></dt>
 <dd><p>Draw a polygon</p>
@@ -135,10 +143,10 @@ svg files can be created with <a href="https://editor.method.ac/">https://editor
 <dt><a href="#hm_polyline">hm:polyline(opt)</a></dt>
 <dd><p>Draw a polyline.</p>
 </dd>
-<dt><a href="#hm_reverseGeocode">hm:reverseGeocode(coord)</a> ⇒ <code>object</code></dt>
+<dt><a href="#hm_reverseGeocode">hm:reverseGeocode(coord)</a> ⇒ <code>Promise</code></dt>
 <dd><p>reverse geocode a coordinate</p>
 </dd>
-<dt><a href="#hm_route">hm:route(source, dest, opt)</a> ⇒ <code>object</code></dt>
+<dt><a href="#hm_route">hm:route(source, dest, opt)</a> ⇒ <code>Promise</code></dt>
 <dd><p>compute a route with optional waypooints. <a href="http://documentation.developer.here.com/pdf/routing_hlp/7.2.100/Routing%20API%20v7.2.100%20Developer&#39;s%20Guide.pdf">See more info on optional parameters</a></p>
 </dd>
 <dt><a href="#hm_screenshot">hm:screenshot(opt, opt)</a> ⇒ <code>data</code></dt>
@@ -228,8 +236,8 @@ creates a cluster of points
 - opt <code>object</code> - options for cluster
     - [.minZoom] <code>number</code> - min zoom for cluster to be visible
     - [.maxZoom] <code>number</code> - max zoom for cluster to be visible
-    - [.noise] <code>array</code> - graphic to represent stand-alone point. format: [url,size]
-    - [.clusterIcon] <code>string</code> - url of svg file representing a cluster
+    - [.noise] <code>array</code> - graphic to represent stand-alone point. format: [url,size]. Anchor will be bottom-center
+    - [.clusterIcon] <code>string</code> - url of svg file representing a cluster. Anchor will be middle of icon
     - [.style] <code>object</code> - define for each minium aggregation level the color and size of the icon. See example
 - cb <code>function</code> - callback to be called if click on item. Format cb(event, coord, payload, weigth). `coord` is coord of icon`payload` is payload associated to point. `weight` is number of points aggregated, when clicking on a cluster icon, 1 if single point
 
@@ -254,11 +262,11 @@ To configure app_id, app_code and optionally use CIT and http
 ```js hm.config({     app_id: "YOUR APP_ID",     app_code: "YOUR APP_CODE",  }); ```
 <a name="hm_detour"></a>
 
-## hm:detour(start, stop, waypoints) ⇒ <code>object</code>
+## hm:detour(start, stop, waypoints) ⇒ <code>Promise</code>
 Compute the detour for each waypoint provided, compared to normal route from A to B
 
 **Kind**: global function  
-**Returns**: <code>object</code> - returns {reference,waypoints:[ {coord,distA,timeA,distB,timeB}]}  
+**Returns**: <code>Promise</code> - returns {reference: {start, stop, distance, distance2, time, time2} ,waypoints:[ {coord, distA, timeA, distB, timeB}]}  
 **Params**
 
 - start <code>coord</code> - starting point for route
@@ -267,11 +275,11 @@ Compute the detour for each waypoint provided, compared to normal route from A t
 
 <a name="hm_geocode"></a>
 
-## hm:geocode(address) ⇒ <code>Object</code>
+## hm:geocode(address) ⇒ <code>Promise</code>
 geocode an address
 
 **Kind**: global function  
-**Returns**: <code>Object</code> - returns  {coord,body}. coord is geocode as \[lat,lng\]. body is full json answer  
+**Returns**: <code>Promise</code> - {coord,body}. coord is geocode as \[lat,lng\]. body is full json answer  
 **Params**
 
 - address <code>string</code> - address as string
@@ -308,11 +316,11 @@ return zoom value
 **Returns**: <code>number</code> - zoom level  
 <a name="hm_isoline"></a>
 
-## hm:isoline(opt) ⇒ <code>object</code>
+## hm:isoline(opt) ⇒ <code>Promise</code>
 compute an isoline. [See more info on optional parameters](http://documentation.developer.here.com/pdf/routing_hlp/7.2.100/Routing%20API%20v7.2.100%20Developer's%20Guide.pdf)
 
 **Kind**: global function  
-**Returns**: <code>object</code> - returns { poly:array, body:object }. Poly is array of coords, body is full answer  
+**Returns**: <code>Promise</code> - returns { poly:array, body:object }. Poly is array of coords, body is full answer  
 **Params**
 
 - opt <code>object</code> - option for isoline
@@ -349,7 +357,7 @@ delete a layer
 <a name="hm_layerEmpty"></a>
 
 ## hm:layerEmpty(layer)
-Empty a layer, actually deletes it and recreate it
+Empty a layer,
 
 **Kind**: global function  
 **Params**
@@ -417,7 +425,7 @@ add a marker in a layersvg files can be created with https://editor.method.ac/
 **Kind**: global function  
 **Params**
 
-- opt <code>object</code> - options to create the marker
+- opt <code>object</code> - options to create the marker, can be a coord directly
     - [.layer] <code>string</code> - layer name
     - [.coord] <code>coord</code> - coord of the marker as \[lat,lng\]
     - [.icon] <code>string</code> - created from hm.buildIcon
@@ -431,14 +439,14 @@ add a marker in a layersvg files can be created with https://editor.method.ac/
     - .dragged <code>function</code> - if dragged, callback(target,coord)
 
 **Example**  
-```jshm.marker({   coord: [48.8,2.3],});hm.marker({  svg: "svg/marker.svg",  color:"red",  ratio:0.5});hm.marker({   img: "http://whatever.com/image.png",   coord: [48.8,2.3]});hm.marker({   coord: [48.8,2.3],   data:"Hello world",   bubble: true});hm.marker({   coord: [48.8,2.3],   draggable:true,   dragged: function(target,coord) {console.log("dragged to",coord);}}); ```
+```jshm.marker([48.8,2.3]);hm.marker({   coord: [48.8,2.3],});hm.marker({  svg: "svg/marker.svg",  color:"red",  ratio:0.5});hm.marker({   img: "http://whatever.com/image.png",   coord: [48.8,2.3]});hm.marker({   coord: [48.8,2.3],   data:"Hello world",   bubble: true});hm.marker({   coord: [48.8,2.3],   draggable:true,   dragged: function(target,coord) {console.log("dragged to",coord);}}); ```
 <a name="hm_matrix"></a>
 
-## hm:matrix(source, dest, opt) ⇒ <code>object</code>
+## hm:matrix(source, dest, opt) ⇒ <code>Promise</code>
 compute a matrix. [See more info on optional parameters](http://documentation.developer.here.com/pdf/routing_hlp/7.2.100/Routing%20API%20v7.2.100%20Developer's%20Guide.pdf)Matrix size is limited to 1x100, 100x1 or 15xN
 
 **Kind**: global function  
-**Returns**: <code>object</code> - { entries: object, body:object }. entries is the array of {start,stop} information. body is full json answer  
+**Returns**: <code>Promise</code> - { entries: object, body:object }. entries is the array of {start,stop} information. body is full json answer  
 **Params**
 
 - source <code>object</code> - source as \[lat,lng\]. Can be array of \[lat,lng\]
@@ -449,6 +457,19 @@ compute a matrix. [See more info on optional parameters](http://documentation.de
 
 **Example**  
 ```jsconst res = await hm.matrix({     source:[48.8,2.3]     dest:[[48.7,2.5],[48.1,2.0],[44.2,2.3]]});console.log (res.entries); ```
+<a name="hm_placeAutoSuggest"></a>
+
+## hm:placeAutoSuggest(opt) ⇒ <code>Promise</code>
+Place AutoSuggest@ async
+
+**Kind**: global function  
+**Returns**: <code>Promise</code> - Array of {res,title,value,coord}  
+**Params**
+
+- opt <code>Object</code> - options of autosuggest
+    - .search <code>String</code> - search string
+    - .center <code>Coord</code> - center search around this coord
+
 <a name="hm_polygon"></a>
 
 ## hm:polygon(opt)
@@ -482,22 +503,22 @@ Draw a polyline.
 
 <a name="hm_reverseGeocode"></a>
 
-## hm:reverseGeocode(coord) ⇒ <code>object</code>
+## hm:reverseGeocode(coord) ⇒ <code>Promise</code>
 reverse geocode a coordinate
 
 **Kind**: global function  
-**Returns**: <code>object</code> - returns { location:object, address:object, body:object}.  
+**Returns**: <code>Promise</code> - returns { location:object, address:object, body:object}.  
 **Params**
 
-- coord <code>Coord</code> - coord \[lat,lng\] to reverse geocode
+- coord <code>Coord</code> - coord \[lat,lng\] to reverse-geocode
 
 <a name="hm_route"></a>
 
-## hm:route(source, dest, opt) ⇒ <code>object</code>
+## hm:route(source, dest, opt) ⇒ <code>Promise</code>
 compute a route with optional waypooints. [See more info on optional parameters](http://documentation.developer.here.com/pdf/routing_hlp/7.2.100/Routing%20API%20v7.2.100%20Developer's%20Guide.pdf)
 
 **Kind**: global function  
-**Returns**: <code>object</code> - returns { summary: object, coords:array,route: object, body:object}. coords is array of coord, to be used with hm.polyline.  
+**Returns**: <code>Promise</code> - returns { summary: object, coords:array,route: object, body:object}. coords is array of coord, to be used with hm.polyline.  
 **Params**
 
 - source <code>object</code> - source as \[lat,lng\]. Can be array of \[lat,lng\] to define waypoints
