@@ -3,12 +3,28 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": [
+    "configurations": [{
+            "type": "chrome",
+            "request": "launch",
+            "name": "Demo touch",
+            "url": "http://devbab/github/heremap/demo/demo-touch.html",
+            "sourceMaps": true,
+            "webRoot": "${workspaceFolder}"
+        },
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Demo Autocomplete",
-            "url": "http://devbab/gitHub/heremap/demo/demo-autocomplete.html",
+            "name": "Demo cluster",
+            "url": "https://devbab/github/heremap/demo/demo-cluster.html",
+            "sourceMaps": true,
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Demo autocomplete",
+            "url": "http://devbab/github/heremap/demo/demo-autocomplete.html",
+            "sourceMaps": true,
             "webRoot": "${workspaceFolder}"
         }
     ]

@@ -7,6 +7,7 @@
 
 let modules = {};
 Object.assign(modules, require("./common.js"));
+Object.assign(modules, require("./geometry.js"));
 Object.assign(modules, require("./routing.js"));
 Object.assign(modules, require("./geocoding.js"));
 Object.assign(modules, require("./place.js"));

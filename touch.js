@@ -43,8 +43,8 @@ function touch(onoff, options) {
     _behavior = hm.getBehavior();
     let elmt = document.getElementById(hm.getMapHtmlItem());
 
-    _touchOffset = { left: elmt.offsetLeft, top: elmt.offsetTop }; // offset of window to browser
-
+    let bb = elmt.getBoundingClientRect();
+    _touchOffset = { left: bb.x, top: bb.y }; // offset of window to browser
 
     const settings = {
         callback: null,
@@ -59,8 +59,8 @@ function touch(onoff, options) {
 
     _touchLayer = hm.layerFind(settings.layer);
     if (!_touchLayer) {
-        hm.layerEmpty(settings.layer);
-        _touchLayer = hm.layerFind(settings.layer);
+        _touchLayer = hm.layerCreate(settings.layer);
+        //_touchLayer = hm.layerFind(settings.layer);
     }
 
     // callback des event Listener
@@ -102,12 +102,12 @@ function touch(onoff, options) {
 
                     var lineString = new H.geo.LineString;
 
-                    for (var i = 0; i < _touchCoords.length; i++) {
-                        var coord = _map.screenToGeo(_touchCoords[i].x, _touchCoords[i].y);
+                    _touchCoords.forEach(c => {
+                        let coord = _map.screenToGeo(c.x, c.y);
                         lineString.pushLatLngAlt(coord.lat, coord.lng, 0);
-                    }
+                    });
 
-                    // create lpolyline if not exists
+                    // create polyline if not exists
                     if (!_touchPolyline) {
                         _touchPolyline = new H.map.Polyline(lineString, {
                             style: settings.style,
@@ -122,23 +122,24 @@ function touch(onoff, options) {
                     if (_touchCoords.length < 2) // not enough points
                         return;
 
-                    simplified = _touchCoords; //as {x,y}
+                    simplified = _touchCoords; //as array of {x,y}
                     if (settings.callback) {
 
                         // simplify the result
-                        if (settings.tolerance > 0) {
-                            let coordsxy = _touchCoords.map(coord => { return { x: coord[1], y: coord[0] }; });
-                            simplified = simplify(coordsxy, settings.tolerance, false);
-                        }
+                        if (settings.tolerance > 0)
+                            simplified = simplify(_touchCoords, settings.tolerance, false);
 
-                        if (simplified.length < 1) // not enough points
-                            return;
+                        // not enough points, go back to initial
+                        if (simplified.length < 1)
+                            simplified = _touchCoords;
 
-                        // convert back to [lat,lng]
+                        // convert from{x,y} screen to [lat,lng]
                         let coords = simplified.map(coord => {
                             let latlng = _map.screenToGeo(coord.x, coord.y);
                             return [latlng.lat, latlng.lng];
                         });
+
+                        //let coords = geom.simplify(_touchCoords, settings.tolerance)
 
                         //up to callback to redraw
                         if (_touchPolyline && !settings.keep)
@@ -182,5 +183,4 @@ function touch(onoff, options) {
 
 module.exports = {
     touch: touch
-
 };

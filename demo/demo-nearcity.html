@@ -62,7 +62,6 @@
 
 
 <script language="javascript" type="text/javascript">
-
     var hm = window.heremap;
 
     function _init() {
@@ -107,7 +106,7 @@
                     hm.marker({
                         coord: [res.latitude, res.longitude],
                         layer: "near",
-                        svg: "svg/text.svg",
+                        svg: "@svg/text.svg",
                         opt: {
                             anchor: "125x25",
                             color: "red",
@@ -145,7 +144,7 @@
         // Rename to shorter variables
         var A = [startPoint[1], startPoint[0]];
         var O = [midPoint[1], midPoint[0]];
-        var B = [endPoint[1], endPoint[0]];  // from lat,lng to x,y
+        var B = [endPoint[1], endPoint[0]]; // from lat,lng to x,y
 
         var azimuthAO = turf.bearing(A, O);
         var azimuthBO = turf.bearing(B, O);

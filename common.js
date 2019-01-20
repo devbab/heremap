@@ -24,8 +24,9 @@ if (process.browser) {
     let _script = document.getElementsByTagName("script");
     let _file = _script[_script.length - 1].src;
     let _path = _file.substring(0, _file.lastIndexOf("/"));
+    let pos = _path.indexOf("heremap");
+    _home = _path.substring(0, pos + "heremap".length) + "/";
 
-    _home = _path + "/../"; // a bit dirty but ...
 }
 
 /**
@@ -62,10 +63,12 @@ function config(opt) {
 }
 
 /**
- * return URL of module home directory
+ * return URL of module home directory. 
+ * svg icons are under getHome()+"/svg/"
+ * images are under getHome()+"/img/"
  * @ignore
  *  @alias hm:getHome
- * @return {string} url of home directory including http or https
+ * @return {string} url of home directory including http or https. 
  */
 function getHome() {
     return _home;

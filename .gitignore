@@ -7,4 +7,4 @@ demo/credentials.js
 test.js
 jsdoc/
 .vscode/
-
+./heremap.min.js

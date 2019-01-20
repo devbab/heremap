@@ -27,10 +27,10 @@ To use in a js file
 
 2/ For use in browser, add these lines in your html file
 
-	<link rel="stylesheet" type="text/css" href="http://www.unpkg.com/heremap@2.0.5/css/heremap.css" />
+	<link rel="stylesheet" type="text/css" href="http://www.unpkg.com/heremap@2.1.0/css/heremap.css" />
 
-	<script src="http://www.unpkg.com/heremap@2.0.5/dist/libhere.min.js" type="text/javascript" charset="utf-8"></script>
-	<script src="http://www.unpkg.com/heremap@2.0.5/dist/heremap.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://www.unpkg.com/heremap@2.1.0/dist/libhere.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://www.unpkg.com/heremap@2.1.0/dist/heremap.min.js" type="text/javascript" charset="utf-8"></script>
 
 	<div id="map"></div>
 
@@ -83,8 +83,17 @@ See under directory [demo](demo):
 <dt><a href="#hm_cluster">hm:cluster(coords, opt, cb)</a> ⇒ <code>H.map.layer.ObjectLayer</code></dt>
 <dd><p>creates a cluster of points</p>
 </dd>
+<dt><a href="#hm_clusterHide">hm:clusterHide()</a></dt>
+<dd><p>Hide cluster layer</p>
+</dd>
+<dt><a href="#hm_clusterShow">hm:clusterShow()</a></dt>
+<dd><p>show Cluster layer</p>
+</dd>
 <dt><a href="#hm_config">hm:config(opt)</a></dt>
 <dd><p>To configure app_id, app_code and optionally use CIT and http</p>
+</dd>
+<dt><a href="#hm_coords2XY">hm:coords2XY(coords)</a> ⇒ <code>array</code></dt>
+<dd><p>Convert array of [lat,lng] to array of {x,y}</p>
 </dd>
 <dt><a href="#hm_detour">hm:detour(start, stop, waypoints)</a> ⇒ <code>Promise</code></dt>
 <dd><p>Compute the detour for each waypoint provided, compared to normal route from A to B</p>
@@ -118,6 +127,9 @@ See under directory [demo](demo):
 </dd>
 <dt><a href="#hm_layerFind">hm:layerFind(name)</a></dt>
 <dd><p>find layer by its name or return null</p>
+</dd>
+<dt><a href="#hm_layerSetVisibility">hm:layerSetVisibility(name, visible)</a></dt>
+<dd><p>create a layer</p>
 </dd>
 <dt><a href="#hm_locateMe">hm:locateMe(callback, opt)</a></dt>
 <dd><p>watch position on HTML5 position. requires HTTPS</p>
@@ -164,8 +176,14 @@ svg files can be created with <a href="https://editor.method.ac/">https://editor
 <dt><a href="#hm_setZoom">hm:setZoom(zoom)</a></dt>
 <dd><p>set zoom level</p>
 </dd>
+<dt><a href="#hm_simplify">hm:simplify(coords, tolerance)</a> ⇒ <code>array</code></dt>
+<dd><p>Simplify a polyline by using the Ramer-Douglas-Peucker algorithm</p>
+</dd>
 <dt><a href="#hm_touch">hm:touch(onoff, options)</a></dt>
 <dd><p>activate touch, allowing hand drawing, with embedded simplification of the line</p>
+</dd>
+<dt><a href="#hm_xy2Coords">hm:xy2Coords(coords)</a> ⇒ <code>array</code></dt>
+<dd><p>Convert array of {x,y} to array of [lat,lng]</p>
 </dd>
 </dl>
 
@@ -236,13 +254,28 @@ creates a cluster of points
 - opt <code>object</code> - options for cluster
     - [.minZoom] <code>number</code> - min zoom for cluster to be visible
     - [.maxZoom] <code>number</code> - max zoom for cluster to be visible
-    - [.noise] <code>array</code> - graphic to represent stand-alone point. format: [url,size]. Anchor will be bottom-center
-    - [.clusterIcon] <code>string</code> - url of svg file representing a cluster. Anchor will be middle of icon
-    - [.style] <code>object</code> - define for each minium aggregation level the color and size of the icon. See example
+    - [.noise] <code>object</code> - graphic to represent stand-alone point. {icon,size}
+        - [.icon] <code>string</code> - png/jpg/scg file. @ as first character indicates a file from this package. Anchor will be bottom-center
+        - [.size] <code>number</code> - optional size of icon
+    - [.cluster] <code>object</code> - { weight:{icon,size}, weight:{icon,size},... }
+        - [.icon] <code>string</code> - graphic for group of pois. @ as first character indicates a file from this package. Anchor will be middle of icon
+        - [.size] <code>number</code> - size of icon
 - cb <code>function</code> - callback to be called if click on item. Format cb(event, coord, payload, weigth). `coord` is coord of icon`payload` is payload associated to point. `weight` is number of points aggregated, when clicking on a cluster icon, 1 if single point
 
 **Example**  
-```jslet pois = [[48.8,2.3,"Hello world"],[48.5,2.4,"How are you"],[45.2,2.93,"Very well"]];hm.cluster(pois);// with more graphic options and callback defined hm.cluster(pois, {          noise: ["mcdo.png", 24],          clusterIcon: '../svg/cluster2.svg',    //  icon for cluster          style: {              200: { color: "#B50015", size: 64 }  // for 200 or more points aggrregated, drag red big icon              75: { color: "#FF6900", size: 58 },  // for 75 or more points aggregated. orange middle size icon              2: { color: "#7BD30A", size: 46 },   // for 2 or more points aggregated. green small icon          }      },          (event, coordinate, data, weight) => {              if (data)                  console.log("click on point ", data);              else                  console.log("click on cluster with weight", weight);          });```
+```jslet pois = [[48.8,2.3,"Hello world"],[48.5,2.4,"How are you"],[45.2,2.93,"Very well"]];hm.cluster(pois);// with more graphic options and callback defined  let opt = {   noise: {         icon: "mcdo.png",         size: 12     },   cluster: {      200: {          icon: "@svg/cluster_red.svg",          color: "#B50015",          size: 64      },      75: {          icon: "@svg/cluster_orange.svg",          color: "#FF6900",          size: 52      },      2: {          icon: "@svg/cluster_green.svg",          color: "#7BD30A",          size: 40       }   }  }; hm.cluster(pois, opt,          (event, coordinate, data, weight) => {              if (data)                  console.log("click on point ", data);              else                  console.log("click on cluster with weight", weight);          });```
+<a name="hm_clusterHide"></a>
+
+## hm:clusterHide()
+Hide cluster layer
+
+**Kind**: global function  
+<a name="hm_clusterShow"></a>
+
+## hm:clusterShow()
+show Cluster layer
+
+**Kind**: global function  
 <a name="hm_config"></a>
 
 ## hm:config(opt)
@@ -260,6 +293,17 @@ To configure app_id, app_code and optionally use CIT and http
 
 **Example**  
 ```js hm.config({     app_id: "YOUR APP_ID",     app_code: "YOUR APP_CODE",  }); ```
+<a name="hm_coords2XY"></a>
+
+## hm:coords2XY(coords) ⇒ <code>array</code>
+Convert array of [lat,lng] to array of {x,y}
+
+**Kind**: global function  
+**Returns**: <code>array</code> - array of {x,y}  
+**Params**
+
+- coords <code>array</code> - array of [lat,lng]
+
 <a name="hm_detour"></a>
 
 ## hm:detour(start, stop, waypoints) ⇒ <code>Promise</code>
@@ -374,6 +418,19 @@ find layer by its name or return null
 
 - name <code>string</code>
 
+<a name="hm_layerSetVisibility"></a>
+
+## hm:layerSetVisibility(name, visible)
+create a layer
+
+**Kind**: global function  
+**Params**
+
+- name <code>string</code> - name of layer
+- visible <code>boolean</code> - visible or not
+
+**Example**  
+```jshm.layerVisible("layer1",true); ```
 <a name="hm_locateMe"></a>
 
 ## hm:locateMe(callback, opt)
@@ -406,7 +463,7 @@ create a map area within the specified item
 - opt <code>object</code> - options
     - [.zoom] <code>number</code> <code> = 10</code> - zoom factor
     - [.center] <code>Coord</code> <code> = [48.86, 2.3]</code> - Coord of the center
-    - [.scheme] <code>string</code> <code> = &quot;normal.day.grey&quot;</code> - any scheme defined by HERE, plus "japan", "korea", "black", "white", "transparent". For japan/korea, one needs special credentials as APP_[ID|CODE]_JAPAN APP_[ID|CODE]_KOREA
+    - [.scheme] <code>string</code> <code> = &quot;normal.day.grey&quot;</code> - any scheme defined by HERE, plus "japan", "korea", "black", "white", "transparent". For japan/korea, one needs special credentials as APP_ID_JAPAN APP_KOREA APP_CODE_JAPAN APP_CODE_KOREA
     - [.click] <code>function</code> <code> = </code> - callback on mouse click: callback(coord,button,key)
     - [.dbClick] <code>function</code> <code> = </code> - callback on mouse double click: callback(coord,button,key)
     - [.clickLeft] <code>function</code> <code> = </code> - callback on mouse click left: callback(coord,button,key)
@@ -588,6 +645,18 @@ set zoom level
 
 - zoom <code>number</code>
 
+<a name="hm_simplify"></a>
+
+## hm:simplify(coords, tolerance) ⇒ <code>array</code>
+Simplify a polyline by using the Ramer-Douglas-Peucker algorithm
+
+**Kind**: global function  
+**Returns**: <code>array</code> - simplified polyline  
+**Params**
+
+- coords <code>array</code> - array of [lat,lng]
+- tolerance <code>number</code>
+
 <a name="hm_touch"></a>
 
 ## hm:touch(onoff, options)
@@ -604,6 +673,17 @@ activate touch, allowing hand drawing, with embedded simplification of the line
     - [.arrow] <code>object</code> - arrow style for the line
     - [.tolerance] <code>number</code> <code> = 4</code> - tolerance for simplification
     - [.keep] <code>boolean</code> <code> = false</code> - keep graphic or not when calling callback
+
+<a name="hm_xy2Coords"></a>
+
+## hm:xy2Coords(coords) ⇒ <code>array</code>
+Convert array of {x,y} to array of [lat,lng]
+
+**Kind**: global function  
+**Returns**: <code>array</code> - array of [lat,lng]  
+**Params**
+
+- coords <code>array</code> - array of {x,y}
 
 
 * * *

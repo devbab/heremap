@@ -2,3 +2,5 @@ https://www.iconfinder.com/
 https://www.flaticon.com/packs/map-icons
 https://icons8.com/icons/set/map-marker
 https://icons8.com/
+
+then edit with https://editor.method.ac/ to get right format with width/height information

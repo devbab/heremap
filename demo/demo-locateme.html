@@ -1,0 +1,43 @@
+<html>
+
+<head>
+    <title>HERE Generic map</title>
+
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+    <link rel="stylesheet" type="text/css" href="../css/heremap.css" />
+
+</head>
+
+<body>
+    <div id="mymap"></div>
+
+    <script src="../dist/libhere.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../dist/heremap.min.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="credentials.js" type="text/javascript" charset="utf-8"></script>
+
+
+    <script>
+        var hm = window.heremap;
+
+        hm.config({
+            app_id: APP_ID,
+            app_code: APP_CODE,
+        });
+
+        hm.map(
+            "mymap", {
+                zoom: 12
+            }
+        );
+
+        hm.locateMe((coord, acc) => {
+            console.log("gps", coord, acc)
+        });
+    </script>
+</body>
+
+
+</html>

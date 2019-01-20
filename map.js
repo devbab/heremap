@@ -16,11 +16,11 @@ let _map = null;
 let _behavior = null;
 let group = null;
 let _layers = []; // list all layers
-let _key = {};     // keys  
-let _bubbleMarker = null;     // bubble de mamrker
+let _key = {}; // keys  
+let _bubbleMarker = null; // bubble de mamrker
 let _scheme = "normal.day.grey";
-let _locateMe = null;         // id when locate is active
-let _htmlItem = null;             //the html item on which to put the map
+let _locateMe = null; // id when locate is active
+let _htmlItem = null; //the html item on which to put the map
 
 
 function coordO2A(obj) {
@@ -28,7 +28,10 @@ function coordO2A(obj) {
 }
 
 function coordA2O(arr) {
-    return { lat: arr[0], lng: arr[1] };
+    return {
+        lat: arr[0],
+        lng: arr[1]
+    };
 }
 
 
@@ -40,7 +43,7 @@ function coordA2O(arr) {
  * @param opt {object}  - options
  * @param [opt.zoom=10] {number}  - zoom factor
  * @param [opt.center=[48.86, 2.3]] {Coord}  - Coord of the center
- * @param [opt.scheme=normal.day.grey] {string}  - any scheme defined by HERE, plus "japan", "korea", "black", "white", "transparent". For japan/korea, one needs special credentials as APP_[ID|CODE]_JAPAN APP_[ID|CODE]_KOREA
+ * @param [opt.scheme=normal.day.grey] {string}  - any scheme defined by HERE, plus "japan", "korea", "black", "white", "transparent". For japan/korea, one needs special credentials as APP_ID_JAPAN APP_KOREA APP_CODE_JAPAN APP_CODE_KOREA
  * @param [opt.click=null] {function()}  - callback on mouse click: callback(coord,button,key)
  * @param [opt.dbClick=null] {function()}  - callback on mouse double click: callback(coord,button,key)
  * @param [opt.clickLeft=null] {function}  - callback on mouse click left: callback(coord,button,key)
@@ -74,7 +77,7 @@ function map(htmlItem, opt) {
         center: [48.86, 2.3],
         clickLeft: null,
         clickRight: null,
-        keyDown: null,  // keyboard event
+        keyDown: null, // keyboard event
         click: null,
         dbClick: null,
         viewChange: null, // (zoom,coord)
@@ -112,13 +115,15 @@ function map(htmlItem, opt) {
         max: 20,
         crossOrigin: "anonymous",
         getURL: function (col, row, level) {
-            mps++; if (mps > 4) mps = 1;
+            mps++;
+            if (mps > 4) mps = 1;
             let url = [cm.getProtocol(), "//", mps, ".base.maps" + cm.getCIT() + ".api.here.com/maptile/", "2.1",
                 "/", "maptile", "/", "newest", "/",
                 _scheme, "/", level, "/", col, "/", row, "/", "256",
                 "/", "png", "?lg=", "FRE",
                 "&app_code=", app_code, "&app_id=",
-                app_id].join("");
+                app_id
+            ].join("");
 
             if (_scheme == "japan")
                 url = [cm.getProtocol(), "//", "m.lbs" + cm.getCIT() + ".api.heremaps.jp/v1/map?app_id=",
@@ -130,14 +135,16 @@ function map(htmlItem, opt) {
                     "&tilecol=",
                     col,
                     "&tilerow=",
-                    row].join("");
+                    row
+                ].join("");
 
             else if (_scheme == "korea")
                 url = [cm.getProtocol(), "//", "3.base.maps" + cm.getCIT() + ".api.heremaps.kr/maptile/2.1/maptile/34439348c3/normal.day/",
                     "/", level, "/", col, "/", row, "/", "256",
                     "/", "png", "?lg=", "FRE",
                     "&app_code=", APP_CODE_KOREA, "&app_id=",
-                    APP_ID_KOREA].join("");
+                    APP_ID_KOREA
+                ].join("");
 
             else if (_scheme == "black")
                 url = cm.getHome() + "png/black.png";
@@ -228,9 +235,11 @@ function map(htmlItem, opt) {
         let button = ev.currentPointer.button;
         if (settings.dbClick != "") {
             switch (button) {
-                case 0: settings.dbClick(coordO2A(coord), "left", _key);
+                case 0:
+                    settings.dbClick(coordO2A(coord), "left", _key);
                     break;
-                case 2: settings.dbClick(coordO2A(coord), "right", _key);
+                case 2:
+                    settings.dbClick(coordO2A(coord), "right", _key);
                     break;
             }
         }
@@ -251,9 +260,11 @@ function map(htmlItem, opt) {
             settings.clickRight(coordO2A(coord), "right", _key);
         if (settings.click) {
             switch (button) {
-                case 0: settings.click(coordO2A(coord), "left", _key);
+                case 0:
+                    settings.click(coordO2A(coord), "left", _key);
                     break;
-                case 2: settings.click(coordO2A(coord), "right", _key);
+                case 2:
+                    settings.click(coordO2A(coord), "right", _key);
                     break;
             }
         }
@@ -294,6 +305,8 @@ function map(htmlItem, opt) {
         _map.getViewPort().resize();
 
     });
+
+    return _map;
 }
 
 /**
@@ -362,7 +375,9 @@ function layerDelete(name) {
     // remove group from map
     _map.removeObject(layer);
     //remove form list of layers
-    _layers = _layers.filter(item => { return item.name !== name; });
+    _layers = _layers.filter(item => {
+        return item.name !== name;
+    });
 }
 
 /**
@@ -377,6 +392,24 @@ function layerEmpty(name) {
     layer.removeAll();
 }
 
+/**
+ * create a layer
+ * @alias hm:layerSetVisibility
+ * @param {string} name  - name of layer
+ * @param {boolean} visible  - visible or not
+ * @example
+ * ```js
+ * hm.layerVisible("layer1",true);
+ *  ```
+ */
+function layerSetVisibility(name, visible) {
+    let layer = layerFind(name);
+    if (!layer)
+        return;
+
+    layer.setVisibility(visible);
+
+}
 
 /**
  * find layer by its name or return null 
@@ -394,7 +427,7 @@ function layerFind(name) {
 
 /**
  * set center of the map
-* @alias hm:setCenter
+ * @alias hm:setCenter
  * @param {Array} - coord as [lat,lng]
  * * @example
  * ```js
@@ -445,17 +478,19 @@ function getViewBB() {
  * @param [opt.pois] {array} bouding box aroud all coords defined as \[coord,coord...\]
  * @example
  * ```js
-  * hm.setViewBB("layer1");
+ * hm.setViewBB("layer1");
  *
  * hm.setViewBB({
-    *    pois: coords
-    * });
+ *    pois: coords
+ * });
  *  ```
  */
 function setViewBB(opt) {
 
     if (typeof opt == "string")
-        opt = { layer: opt };
+        opt = {
+            layer: opt
+        };
 
     let settings = {
         layer: null,
@@ -489,9 +524,7 @@ function setViewBB(opt) {
         bbox = new H.geo.Rect(bb.latM, bb.lngm, bb.latm, bb.lngM);
         _map.setViewBounds(bbox, true);
 
-    }
-
-    else if (settings.pois) {
+    } else if (settings.pois) {
         let bb = {
             latM: 0,
             lngm: 180,
@@ -579,9 +612,9 @@ function setZoom(zoom) {
  */
 async function buildIcon(opt) {
     let settings = {
-        img: null,             //   png, jpg. if not http in the beginning, look locally
-        svg: null,             // svg file:  is a url or a string
-        opt: null,              // size, color, anchor, text...s
+        img: null, //   png, jpg. if not http in the beginning, look locally
+        svg: null, // svg file:  is a url or a string
+        opt: null, // size, color, anchor, text...s
     };
 
     Object.assign(settings, opt);
@@ -595,33 +628,36 @@ async function buildIcon(opt) {
     if (settings.img) {
         // console.log("settings.img", settings.img);
 
-        if (settings.img.substr(0, 4) == "http") // url
-            iconSrc = settings.img;
+        if (settings.img[0] == "@") // to indicate local
+            iconSrc = cm.getHome() + settings.img.substr(1);
         else
-            iconSrc = cm.getHome() + settings.img; // local file
+            iconSrc = settings.img; // local file
 
-    }
-    else if (settings.svg) {
+    } else if (settings.svg) {
 
         let url = null;
         iconSrc = settings.svg;
-        if (settings.svg.substr(0, 4) == "http") // url
-            url = settings.svg;
+        if (settings.svg[0] == "@") // local 
+            url = cm.getHome() + settings.svg.substr(1);
         else if (settings.svg.substr(0, 4) == "<svg") // url
             url = null;
         else
-            url = cm.getHome() + settings.svg; //missing protocol, not an embedded string, look in local heremap module
+            url = settings.svg; // not embedded string, should be a url
 
-        if (url) // an url to download
+        if (url) { // an url to download
             iconSrc = await fetch(url)
                 .then(res => {
                     if (res.status != 200)
                         return null;
                     return res.text();
                 });
+        }
+
     }
 
-    let iconOpt = { crossOrigin: true }; // to avoid issued with capture
+    let iconOpt = {
+        crossOrigin: true
+    }; // to avoid issued with capture
     if (settings.opt && settings.opt.size) {
         let w, h;
         if (typeof settings.opt.size == "number")
@@ -629,11 +665,16 @@ async function buildIcon(opt) {
         else
             [w, h] = settings.opt.size.split("x");
 
-        iconOpt.size = { w: w, h: h };
+        iconOpt.size = {
+            w: w,
+            h: h
+        };
     }
 
     function _getsizeSvg(iconSrc) {
-        let w = null, h = null, match;
+        let w = null,
+            h = null,
+            match;
         let r = /width="(\d+)"/;
         match = iconSrc.match(r);
         if (match) w = match[1];
@@ -645,28 +686,36 @@ async function buildIcon(opt) {
     }
 
     if (settings.svg && settings.opt && settings.opt.ratio) {
-        let w = null, h = null;
+        let w = null,
+            h = null;
         [w, h] = _getsizeSvg(iconSrc);
 
-        iconOpt.size = { w: Math.floor(w * settings.opt.ratio), h: Math.floor(h * settings.opt.ratio) };
+        iconOpt.size = {
+            w: Math.floor(w * settings.opt.ratio),
+            h: Math.floor(h * settings.opt.ratio)
+        };
     }
 
     if (settings.opt && settings.opt.anchor) {
-        let w = null, h = null;
+        let x = null,
+            y = null;
         if (typeof settings.opt.anchor == "number")
-            w = h = settings.opt.anchor;
-        else if (settings.opt.anchor == "center" && settings.svg) {  // for svg file only center: get size of split in 2
-            [w, h] = _getsizeSvg(iconSrc);
-            w /= 2; h /= 2;
-        }
-        else
-            [w, h] = settings.opt.anchor.split("x");
+            x = y = settings.opt.anchor;
+        else if (settings.opt.anchor == "center" && settings.svg) { // for svg file only center: get size of split in 2
+            [x, y] = _getsizeSvg(iconSrc);
+            x /= 2;
+            y /= 2;
+        } else
+            [x, y] = settings.opt.anchor.split("x");
 
-        if (!w || !h) {
+        if (!x || !y) {
             let e = new Error("BuildIcon: incorrect anchor"); // e.message
             throw (e);
         }
-        iconOpt.anchor = new H.math.Point(w, h);
+        iconOpt.anchor = {
+            x: x,
+            y: y
+        };
     }
 
     // all other fields are treated as graphic enhanceent
@@ -716,11 +765,11 @@ async function buildIcon(opt) {
  * });
  * 
  * hm.marker({
-    *   svg: "svg/marker.svg",
-    *   color:"red",
-    *   ratio:0.5
-    * });
-    * 
+ *   svg: "svg/marker.svg",
+ *   color:"red",
+ *   ratio:0.5
+ * });
+ * 
  * hm.marker({
  *    img: "http://whatever.com/image.png",
  *    coord: [48.8,2.3]
@@ -737,22 +786,22 @@ async function buildIcon(opt) {
  *    draggable:true,
  *    dragged: function(target,coord) {console.log("dragged to",coord);}
  * });
-*  ```
+ *  ```
  */
 async function marker(opt) {
     let settings = {
-        layer: "default",       //  layer in which to add marker
-        coord: null,            //  coord of the marker
-        img: null,             //  image can be url, png, jpg..
-        svg: null,             // svg file
-        icon: null,              // icon previously created
-        opt: {},               // opt for icon
-        pointerEnter: null,     //  callback(target,coord,ev)
-        pointerClick: null,     //  callback(target,coord,ev)
-        data: null,             //  user data
-        bubble: false,          //  show a bubble with user data
-        draggable: false,       //  icon is draggalbe
-        dragged: null           //  callback(target,coord)
+        layer: "default", //  layer in which to add marker
+        coord: null, //  coord of the marker
+        img: null, //  image can be url, png, jpg..
+        svg: null, // svg file
+        icon: null, // icon previously created
+        opt: {}, // opt for icon
+        pointerEnter: null, //  callback(target,coord,ev)
+        pointerClick: null, //  callback(target,coord,ev)
+        data: null, //  user data
+        bubble: false, //  show a bubble with user data
+        draggable: false, //  icon is draggalbe
+        dragged: null //  callback(target,coord)
     };
 
     // can pass directly only the coord
@@ -767,7 +816,10 @@ async function marker(opt) {
         throw (e);
     }
 
-    settings.coord = { lat: settings.coord[0], lng: settings.coord[1] };
+    settings.coord = {
+        lat: settings.coord[0],
+        lng: settings.coord[1]
+    };
 
     // these parameters can be in opt.opt or directly in opt
     if (settings.color) settings.opt.color = settings.color;
@@ -778,10 +830,13 @@ async function marker(opt) {
     let markerOpt = null;
     if (settings.img || settings.svg) {
         let icon = await buildIcon(settings);
-        markerOpt = { icon: icon };
-    }
-    else if (settings.icon) {
-        markerOpt = { icon: settings.icon };
+        markerOpt = {
+            icon: icon
+        };
+    } else if (settings.icon) {
+        markerOpt = {
+            icon: settings.icon
+        };
     }
 
     //console.log("marker settings.coord", settings.coord);
@@ -895,25 +950,25 @@ function bubbleUniqueHide() {
  * @param [opt.pointerenter] {function} optional callback if mouse enters on line. format callback(target,coord,event)
  * @param [opt.pointerLeave] {function} optional callback if mouse leaves the line. format callback(target,coord,event)
  * @param [opt.z] {number} optional z level
-* ```js
-* hm.polyline({
-    *    coords: [[48.8,2.3],[48.85,2.4],[48.9,2.6]],
-    *    layer:"layer1"
-    * });
-    * 
-    * hm.polyline({
-    *    coords: coords,
-    *    style: {
-    *        lineWidth: 4,
-    *        strokeColor: "red"
-    *    },
-    * });
-    * 
-    * hm.polyline({
-        *    coords: coords,
-        *    data:"Hello World",
-        * });
-    *  ```
+ * ```js
+ * hm.polyline({
+ *    coords: [[48.8,2.3],[48.85,2.4],[48.9,2.6]],
+ *    layer:"layer1"
+ * });
+ * 
+ * hm.polyline({
+ *    coords: coords,
+ *    style: {
+ *        lineWidth: 4,
+ *        strokeColor: "red"
+ *    },
+ * });
+ * 
+ * hm.polyline({
+ *    coords: coords,
+ *    data:"Hello World",
+ * });
+ *  ```
  */
 function polyline(opt) {
     let settings = {
@@ -924,7 +979,7 @@ function polyline(opt) {
             strokeColor: "rgba(0, 128, 255, 0.7)"
         },
         arrows: null,
-        data: null,         // optional user data 
+        data: null, // optional user data 
         z: null,
         pointerClick: null, // click
         pointerEnter: null, // call back
@@ -932,7 +987,9 @@ function polyline(opt) {
     };
 
     if (Array.isArray(opt)) // directement les coord
-        opt = { coords: opt };
+        opt = {
+            coords: opt
+        };
 
     Object.assign(settings, opt);
 
@@ -1012,7 +1069,9 @@ function polygon(opt) {
         pointerLeave: null // call back
     };
     if (Array.isArray(opt)) // directement les coord
-        opt = { coords: opt };
+        opt = {
+            coords: opt
+        };
     Object.assign(settings, opt);
 
     let layer = layerFind(settings.layer);
@@ -1100,7 +1159,7 @@ function circle(opt) {
         style: {
             strokeColor: "rgba(55, 85, 170, 0.2)", // Color of the perimeter
             lineWidth: 2,
-            fillColor: "rgba(0, 128, 0, 0.1)"  // Color of the circle
+            fillColor: "rgba(0, 128, 0, 0.1)" // Color of the circle
         }
 
     };
@@ -1115,8 +1174,7 @@ function circle(opt) {
         // The central point of the circle
         coordA2O(settings.coord),
         // The radius of the circle in meters
-        settings.radius,
-        {
+        settings.radius, {
             style: settings.style
         }
     );
@@ -1156,14 +1214,14 @@ async function locateMe(callback, opt) {
 
         let settings = {
             position: {
-                svg: "svg/target.svg",
+                svg: "@svg/target.svg",
                 color: "black",
                 anchor: "center"
             },
             accuracy: {
                 strokeColor: "rgba(0, 128, 0, 0.8)", // Color of the perimeter
                 lineWidth: 2,
-                fillColor: "rgba(0, 128, 0, 0.4)"  // Color of the circle
+                fillColor: "rgba(0, 128, 0, 0.4)" // Color of the circle
             }
         };
         Object.assign(settings, opt);
@@ -1179,7 +1237,8 @@ async function locateMe(callback, opt) {
         _locateMe = navigator.geolocation.watchPosition((position) => {
             let gps = [position.coords.latitude, position.coords.longitude];
 
-            layerEmpty("_gps");
+            if (!layerFind("_gps"))
+                layerCreate("_gps");
 
             /* circle showing the accuracy radius*/
             circle({
@@ -1214,10 +1273,10 @@ async function locateMe(callback, opt) {
             }
             let e = new Error("HTML5 location error:" + msg); // e.message
             throw (e);
-        }, { enableHighAccuracy: true }
-        );
-    }
-    else {
+        }, {
+            enableHighAccuracy: true
+        });
+    } else {
         let e = new Error("no HTML5 geolocation capabilities"); // e.message
         throw (e);
     }
@@ -1268,6 +1327,7 @@ function getMapHtmlItem() {
 function getMap() {
     return _map;
 }
+
 function getBehavior() {
     return _behavior;
 }
@@ -1290,6 +1350,7 @@ module.exports = {
     layerCreate: layerCreate,
     layerFind: layerFind,
     layerDelete: layerDelete,
+    layerSetVisibility: layerSetVisibility,
     layerEmpty: layerEmpty,
     buildIcon: buildIcon,
     bubbleUnique: bubbleUnique,
@@ -1302,14 +1363,9 @@ module.exports = {
     setCenter: setCenter,
     getZoom: getZoom,
     setZoom: setZoom,
-    getviewBB: getViewBB,
+    getViewBB: getViewBB,
     setViewBB: setViewBB,
     locateMe: locateMe,
     screenshot: screenshot
 
 };
-
-
-
-
-
