@@ -60,8 +60,9 @@ See under directory [demo](demo):
 - [demo-screenshot.html](demo/demo-screenshot.html): how to do a screenshot of the map
 - [demo-asia.html](demo/demo-asia.html): how to display high quality ap in Japan and Korea. (requires special credentials)
 - [demo-autocomplete.html](demo/demo-autocomplete.html): autocomplete exemple
-- [demo-touch.html](demo/demo-touch.html): draw polyline on a touch screen
-- [demo-nearcity.html](demo/demo-nearcity.html): find  big cities around the mouse click
+- [demo-touch.html](demo/demo-touch.html): draw a polyline on a touch screen
+- [demo-nearcity.html](demo/demo-nearcity.html): find big cities around the mouse click
+- [demo-locateme.html](demo/demo-locateme.html): display own location 
  
 
 
@@ -69,7 +70,7 @@ See under directory [demo](demo):
 
 <dl>
 <dt><a href="#hm_bubbleUnique">hm:bubbleUnique(coord, txt)</a></dt>
-<dd><p>display a unique bubble. Associated CSS style is .H_ib_body</p>
+<dd><p>Display a unique bubble. Associated CSS style is .H_ib_body</p>
 </dd>
 <dt><a href="#hm_bubbleUniqueHide">hm:bubbleUniqueHide()</a></dt>
 <dd><p>hide a unique bubble</p>
@@ -81,13 +82,13 @@ See under directory [demo](demo):
 <dd><p>draw a circle</p>
 </dd>
 <dt><a href="#hm_cluster">hm:cluster(coords, opt, cb)</a> ⇒ <code>H.map.layer.ObjectLayer</code></dt>
-<dd><p>creates a cluster of points</p>
+<dd><p>Creates a cluster of points</p>
 </dd>
 <dt><a href="#hm_clusterHide">hm:clusterHide()</a></dt>
 <dd><p>Hide cluster layer</p>
 </dd>
 <dt><a href="#hm_clusterShow">hm:clusterShow()</a></dt>
-<dd><p>show Cluster layer</p>
+<dd><p>Show Cluster layer</p>
 </dd>
 <dt><a href="#hm_config">hm:config(opt)</a></dt>
 <dd><p>To configure app_id, app_code and optionally use CIT and http</p>
@@ -123,7 +124,7 @@ See under directory [demo](demo):
 <dd><p>delete a layer</p>
 </dd>
 <dt><a href="#hm_layerEmpty">hm:layerEmpty(layer)</a></dt>
-<dd><p>Empty a layer,</p>
+<dd><p>Empty a layer, or create it if not existing</p>
 </dd>
 <dt><a href="#hm_layerFind">hm:layerFind(name)</a></dt>
 <dd><p>find layer by its name or return null</p>
@@ -132,7 +133,7 @@ See under directory [demo](demo):
 <dd><p>create a layer</p>
 </dd>
 <dt><a href="#hm_locateMe">hm:locateMe(callback, opt)</a></dt>
-<dd><p>watch position on HTML5 position. requires HTTPS</p>
+<dd><p>watch position on HTML5 position. This requires HTTPS. Creates layer &quot;_gps&quot;</p>
 </dd>
 <dt><a href="#hm_map">hm:map(htmlItem, opt)</a></dt>
 <dd><p>create a map area within the specified item</p>
@@ -168,7 +169,7 @@ svg files can be created with <a href="https://editor.method.ac/">https://editor
 <dd><p>set center of the map</p>
 </dd>
 <dt><a href="#hm_setScheme">hm:setScheme(scheme)</a></dt>
-<dd><p>define the scheme. List of scheme can be obtained from {hm.getAvailableMapStyle()}</p>
+<dd><p>define the scheme. List of scheme can be obtained from hm.getAvailableMapStyle()</p>
 </dd>
 <dt><a href="#hm_setViewBB">hm:setViewBB(opt)</a></dt>
 <dd><p>sets bouding box to be displayed</p>
@@ -190,7 +191,7 @@ svg files can be created with <a href="https://editor.method.ac/">https://editor
 <a name="hm_bubbleUnique"></a>
 
 ## hm:bubbleUnique(coord, txt)
-display a unique bubble. Associated CSS style is .H_ib_body
+Display a unique bubble. Associated CSS style is .H_ib_body
 
 **Kind**: global function  
 **Params**
@@ -220,10 +221,10 @@ create an icon, to be used for a marker
         - [.size] <code>number</code> | <code>string</code> - size of icon, as 24 or 24x32
         - [.ratio] <code>number</code> - for svg files, ratio of size. 0.5 = half
         - [.anchor] <code>number</code> | <code>string</code> - anchor of icon, as 24 or "24x32" or "center". By default, bottom-center
-        - [.tag] <code>string</code> - for svg, any tag like{tag}. will be replaced by associated value
+        - [.tag] <code>string</code> - for svg, any tag like {tag} within the svg file will be replaced by its associated value
 
 **Example**  
-```jshm.buildIcon({   img: "http://whatever.com/image.png",   opt: {size:24}});hm.buildIcon({   svg: "http://whatever.com/image.svg",   opt: {      ratio:0.5,      anchor:24x32   }}); hm.buildIcon({   svg: "svg/cluster.svg",   opt: {      size:24,      color:"red"   }});const svg = `<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"> <ellipse stroke="null" ry="8" rx="7.618896" id="svg_1" cy="8" cx="7.837427" fill="{color}" fill-opacity="0.9"/></svg>`;hm.buildIcon({   svg: svg,   opt: {      size:24,      color:"red"   } }); ```
+```jshm.buildIcon({   img: "http://whatever.com/image.png",   opt: {size:24}});hm.buildIcon({   svg: "http://whatever.com/image.svg",   opt: {      ratio:0.5,      anchor:24x32   }}); hm.buildIcon({   svg: "@svg/cluster.svg",   opt: {      size:24,      color:"red"   }});const svg = `<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"> <ellipse stroke="null" ry="8" rx="7.618896" id="svg_1" cy="8" cx="7.837427" fill="{color}" fill-opacity="0.9"/></svg>`;hm.buildIcon({   svg: svg,   opt: {      size:24,      color:"red"   } }); ```
 <a name="hm_circle"></a>
 
 ## hm:circle(opt)
@@ -244,7 +245,7 @@ draw a circle
 <a name="hm_cluster"></a>
 
 ## hm:cluster(coords, opt, cb) ⇒ <code>H.map.layer.ObjectLayer</code>
-creates a cluster of points
+Creates a cluster of points
 
 **Kind**: global function  
 **Returns**: <code>H.map.layer.ObjectLayer</code> - layer created  
@@ -255,15 +256,15 @@ creates a cluster of points
     - [.minZoom] <code>number</code> - min zoom for cluster to be visible
     - [.maxZoom] <code>number</code> - max zoom for cluster to be visible
     - [.noise] <code>object</code> - graphic to represent stand-alone point. {icon,size}
-        - [.icon] <code>string</code> - png/jpg/scg file. @ as first character indicates a file from this package. Anchor will be bottom-center
+        - [.icon] <code>string</code> - png/jpg/svg file. @ as first character indicates a file from this package. Anchor will be bottom-center
         - [.size] <code>number</code> - optional size of icon
     - [.cluster] <code>object</code> - { weight:{icon,size}, weight:{icon,size},... }
-        - [.icon] <code>string</code> - graphic for group of pois. @ as first character indicates a file from this package. Anchor will be middle of icon
+        - [.icon] <code>string</code> - png/jpg/svg file to represent group of pois. @ as first character indicates a file from this package. Anchor will be middle of icon
         - [.size] <code>number</code> - size of icon
 - cb <code>function</code> - callback to be called if click on item. Format cb(event, coord, payload, weigth). `coord` is coord of icon`payload` is payload associated to point. `weight` is number of points aggregated, when clicking on a cluster icon, 1 if single point
 
 **Example**  
-```jslet pois = [[48.8,2.3,"Hello world"],[48.5,2.4,"How are you"],[45.2,2.93,"Very well"]];hm.cluster(pois);// with more graphic options and callback defined  let opt = {   noise: {         icon: "mcdo.png",         size: 12     },   cluster: {      200: {          icon: "@svg/cluster_red.svg",          color: "#B50015",          size: 64      },      75: {          icon: "@svg/cluster_orange.svg",          color: "#FF6900",          size: 52      },      2: {          icon: "@svg/cluster_green.svg",          color: "#7BD30A",          size: 40       }   }  }; hm.cluster(pois, opt,          (event, coordinate, data, weight) => {              if (data)                  console.log("click on point ", data);              else                  console.log("click on cluster with weight", weight);          });```
+```jslet pois = [[48.8,2.3,"Hello world"],[48.5,2.4,"How are you"],[45.2,2.93,"Very well"]];hm.cluster(pois);// with more graphic options and callback defined  let opt = {   noise: {         icon: "mcdo.png",         size: 12     },   cluster: {      200: {          icon: "@svg/cluster_red.svg",          size: 64      },      75: {          icon: "@svg/cluster_orange.svg",          size: 52      },      2: {          icon: "@svg/cluster_green.svg",          size: 40       }   }  }; hm.cluster(pois, opt,          (event, coordinate, data, weight) => {              if (data)                  console.log("click on point ", data);              else                  console.log("click on cluster with weight", weight);          });```
 <a name="hm_clusterHide"></a>
 
 ## hm:clusterHide()
@@ -273,7 +274,7 @@ Hide cluster layer
 <a name="hm_clusterShow"></a>
 
 ## hm:clusterShow()
-show Cluster layer
+Show Cluster layer
 
 **Kind**: global function  
 <a name="hm_config"></a>
@@ -401,7 +402,7 @@ delete a layer
 <a name="hm_layerEmpty"></a>
 
 ## hm:layerEmpty(layer)
-Empty a layer,
+Empty a layer, or create it if not existing
 
 **Kind**: global function  
 **Params**
@@ -434,7 +435,7 @@ create a layer
 <a name="hm_locateMe"></a>
 
 ## hm:locateMe(callback, opt)
-watch position on HTML5 position. requires HTTPS
+watch position on HTML5 position. This requires HTTPS. Creates layer "_gps"
 
 **Kind**: global function  
 **Params**
@@ -614,7 +615,7 @@ set center of the map
 <a name="hm_setScheme"></a>
 
 ## hm:setScheme(scheme)
-define the scheme. List of scheme can be obtained from {hm.getAvailableMapStyle()}
+define the scheme. List of scheme can be obtained from hm.getAvailableMapStyle()
 
 **Kind**: global function  
 **Params**

@@ -329,7 +329,7 @@ function getAvailableMapStyle() {
 }
 
 /**
- * define the scheme. List of scheme can be obtained from {hm.getAvailableMapStyle()}
+ * define the scheme. List of scheme can be obtained from hm.getAvailableMapStyle()
  * @alias hm:setScheme
  * @param {string} scheme scheme name
  */
@@ -381,14 +381,16 @@ function layerDelete(name) {
 }
 
 /**
- * Empty a layer,
+ * Empty a layer, or create it if not existing
  * @alias hm:layerEmpty
  * @param {string} layer 
  */
 function layerEmpty(name) {
     let layer = layerFind(name);
-    if (!layer)
+    if (!layer) {
+        layerCreate(name);
         return;
+    }
     layer.removeAll();
 }
 
@@ -575,7 +577,7 @@ function setZoom(zoom) {
  * @param [opt.opt.size] {number|string}   size of icon, as 24 or 24x32
  * @param [opt.opt.ratio] {number}   for svg files, ratio of size. 0.5 = half
  * @param [opt.opt.anchor] {number|string}   anchor of icon, as 24 or "24x32" or "center". By default, bottom-center
- * @param [opt.opt.tag] {string}   for svg, any tag like{tag}. will be replaced by associated value
+ * @param [opt.opt.tag] {string}  for svg, any tag like {tag} within the svg file will be replaced by its associated value
  * @return {H.map.Icon} the created icon
  * @example 
  * ```js
@@ -593,7 +595,7 @@ function setZoom(zoom) {
  * });
  *  
  * hm.buildIcon({
- *    svg: "svg/cluster.svg",
+ *    svg: "@svg/cluster.svg",
  *    opt: {
  *       size:24,
  *       color:"red"
@@ -897,7 +899,7 @@ async function marker(opt) {
 } //end of marker
 
 /**
- * display a unique bubble. Associated CSS style is .H_ib_body
+ * Display a unique bubble. Associated CSS style is .H_ib_body
  * @alias hm:bubbleUnique
  * @param {Array} coord of the bubble
  * @param {String} txt html text to display
@@ -1187,7 +1189,7 @@ function circle(opt) {
 
 
 /**
- * watch position on HTML5 position. requires HTTPS
+ * watch position on HTML5 position. This requires HTTPS. Creates layer "_gps"
  * @async
  * @alias hm:locateMe
  * @param callback {function}  callback when coord changes. Format: callback(coord,accuracy) 
@@ -1209,6 +1211,7 @@ async function locateMe(callback, opt) {
         if (!callback && _locateMe) {
             navigator.geolocation.clearWatch(_locateMe);
             _locateMe = null;
+            layerDelete("_gps");
             return;
         }
 
@@ -1237,8 +1240,7 @@ async function locateMe(callback, opt) {
         _locateMe = navigator.geolocation.watchPosition((position) => {
             let gps = [position.coords.latitude, position.coords.longitude];
 
-            if (!layerFind("_gps"))
-                layerCreate("_gps");
+            layerEmpty("_gps");
 
             /* circle showing the accuracy radius*/
             circle({

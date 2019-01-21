@@ -17,17 +17,17 @@ let clusteredDataProvider = null;
 
 
 /**
- * creates a cluster of points
+ * Creates a cluster of points
  * @alias hm:cluster
  * @param coords {Array}  array of \[lat,lng,payload\]
  * @param opt {object} options for cluster
  * @param [opt.minZoom] {number} min zoom for cluster to be visible
  * @param [opt.maxZoom] {number} max zoom for cluster to be visible
  * @param [opt.noise] {object} graphic to represent stand-alone point. {icon,size}
- * @param [opt.noise.icon] {string} png/jpg/scg file. @ as first character indicates a file from this package. Anchor will be bottom-center
+ * @param [opt.noise.icon] {string} png/jpg/svg file. @ as first character indicates a file from this package. Anchor will be bottom-center
  * @param [opt.noise.size] {number} optional size of icon
  * @param [opt.cluster] {object} { weight:{icon,size}, weight:{icon,size},... }
- * @param [opt.cluster.icon] {string} graphic for group of pois. @ as first character indicates a file from this package. Anchor will be middle of icon
+ * @param [opt.cluster.icon] {string} png/jpg/svg file to represent group of pois. @ as first character indicates a file from this package. Anchor will be middle of icon
  * @param [opt.cluster.size] {number} size of icon
  * @param {function} cb callback to be called if click on item. Format cb(event, coord, payload, weigth). 
  * `coord` is coord of icon
@@ -51,17 +51,14 @@ let clusteredDataProvider = null;
  *    cluster: {
  *       200: {
  *           icon: "@svg/cluster_red.svg",
- *           color: "#B50015",
  *           size: 64
  *       },
  *       75: {
  *           icon: "@svg/cluster_orange.svg",
- *           color: "#FF6900",
  *           size: 52
  *       },
  *       2: {
  *           icon: "@svg/cluster_green.svg",
- *           color: "#7BD30A",
  *           size: 40
  *        }
  *    }
@@ -376,7 +373,7 @@ function clusterHide() {
 }
 
 /**
- * show Cluster layer
+ * Show Cluster layer
  * @alias hm:clusterShow
  */
 function clusterShow() {
