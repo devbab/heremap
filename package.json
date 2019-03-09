@@ -1,10 +1,10 @@
 {
     "name": "heremap",
-    "version": "2.1.1",
+    "version": "2.1.2",
     "description": "node/browser interface to HERE Maps REST API",
     "main": "heremap.js",
     "unpkg": "dist/heremap.min.js",
-    "source": "heremap.js common.js geometry.js map.js routing.js geocoding.js cluster.js touch.js place.js",
+    "source": "./heremap.js ./common.js ./geometry.js ./map.js ./routing.js ./geocoding.js ./cluster.js ./touch.js ./place.js",
     "scripts": {
         "jest": "jest",
         "eslint": "eslint --ignore-path .eslintignore .",
@@ -35,8 +35,9 @@
     "homepage": "https://github.com/devbab/heremap#readme",
     "dependencies": {
         "@turf/angle": "^6.0.1",
+        "jsdoc-to-markdown": "^4.0.1",
         "simplify-js": "^1.2.3",
-        "superagent": "^4.0.0",
+        "superagent": "^4.1.0",
         "turf": "^3.0.14"
     },
     "devDependencies": {

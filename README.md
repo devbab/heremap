@@ -27,10 +27,10 @@ To use in a js file
 
 2/ For use in browser, add these lines in your html file
 
-	<link rel="stylesheet" type="text/css" href="http://www.unpkg.com/heremap@2.1.0/css/heremap.css" />
+	<link rel="stylesheet" type="text/css" href="http://www.unpkg.com/heremap@2.1.2/css/heremap.css" />
 
-	<script src="http://www.unpkg.com/heremap@2.1.0/dist/libhere.min.js" type="text/javascript" charset="utf-8"></script>
-	<script src="http://www.unpkg.com/heremap@2.1.0/dist/heremap.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://www.unpkg.com/heremap@2.1.2/dist/libhere.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://www.unpkg.com/heremap@2.1.2/dist/heremap.min.js" type="text/javascript" charset="utf-8"></script>
 
 	<div id="map"></div>
 
@@ -93,6 +93,15 @@ See under directory [demo](demo):
 <dt><a href="#hm_config">hm:config(opt)</a></dt>
 <dd><p>To configure app_id, app_code and optionally use CIT and http</p>
 </dd>
+<dt><a href="#hm_coord2Point">hm:coord2Point([lat,lng])</a> ⇒ <code>array</code></dt>
+<dd><p>Convert [lat,lng] to {lat,lng}</p>
+</dd>
+<dt><a href="#hm_coordA2O">hm:coordA2O(arr)</a> ⇒ <code>array</code></dt>
+<dd><p>Convert an array [lat,lng] to {lat,lng}</p>
+</dd>
+<dt><a href="#hm_coordO2A">hm:coordO2A(obj)</a> ⇒ <code>array</code></dt>
+<dd><p>Convert an object {lat,lng} to [lat,lng]</p>
+</dd>
 <dt><a href="#hm_coords2XY">hm:coords2XY(coords)</a> ⇒ <code>array</code></dt>
 <dd><p>Convert array of [lat,lng] to array of {x,y}</p>
 </dd>
@@ -113,6 +122,9 @@ See under directory [demo](demo):
 </dd>
 <dt><a href="#hm_getZoom">hm:getZoom()</a> ⇒ <code>number</code></dt>
 <dd><p>return zoom value</p>
+</dd>
+<dt><a href="#hm_htmlBounding">hm:htmlBounding()</a> ⇒ <code>object</code></dt>
+<dd><p>provide bounding box of element hosting map, relatve to window</p>
 </dd>
 <dt><a href="#hm_isoline">hm:isoline(opt)</a> ⇒ <code>Promise</code></dt>
 <dd><p>compute an isoline. <a href="http://documentation.developer.here.com/pdf/routing_hlp/7.2.100/Routing%20API%20v7.2.100%20Developer&#39;s%20Guide.pdf">See more info on optional parameters</a></p>
@@ -138,7 +150,7 @@ See under directory [demo](demo):
 <dt><a href="#hm_map">hm:map(htmlItem, opt)</a></dt>
 <dd><p>create a map area within the specified item</p>
 </dd>
-<dt><a href="#hm_marker">hm:marker(opt)</a></dt>
+<dt><a href="#hm_marker">hm:marker(opt)</a> ⇒ <code>H.map.Marker</code></dt>
 <dd><p>add a marker in a layer
 svg files can be created with <a href="https://editor.method.ac/">https://editor.method.ac/</a></p>
 </dd>
@@ -149,6 +161,9 @@ svg files can be created with <a href="https://editor.method.ac/">https://editor
 <dt><a href="#hm_placeAutoSuggest">hm:placeAutoSuggest(opt)</a> ⇒ <code>Promise</code></dt>
 <dd><p>Place AutoSuggest
 @ async</p>
+</dd>
+<dt><a href="#hm_point2Coord">hm:point2Coord({lat,lng})</a> ⇒ <code>array</code></dt>
+<dd><p>Convert {lat,lng} to [lat,lng]</p>
 </dd>
 <dt><a href="#hm_polygon">hm:polygon(opt)</a></dt>
 <dd><p>Draw a polygon</p>
@@ -185,6 +200,9 @@ svg files can be created with <a href="https://editor.method.ac/">https://editor
 </dd>
 <dt><a href="#hm_xy2Coords">hm:xy2Coords(coords)</a> ⇒ <code>array</code></dt>
 <dd><p>Convert array of {x,y} to array of [lat,lng]</p>
+</dd>
+<dt><a href="#marker_getCoord">marker:getCoord()</a> ⇒ <code>coord</code></dt>
+<dd><p>get coordinates of a marker</p>
 </dd>
 </dl>
 
@@ -294,6 +312,39 @@ To configure app_id, app_code and optionally use CIT and http
 
 **Example**  
 ```js hm.config({     app_id: "YOUR APP_ID",     app_code: "YOUR APP_CODE",  }); ```
+<a name="hm_coord2Point"></a>
+
+## hm:coord2Point([lat,lng]) ⇒ <code>array</code>
+Convert [lat,lng] to {lat,lng}
+
+**Kind**: global function  
+**Returns**: <code>array</code> - {lat,lng}  
+**Params**
+
+- [lat,lng] <code>array</code>
+
+<a name="hm_coordA2O"></a>
+
+## hm:coordA2O(arr) ⇒ <code>array</code>
+Convert an array [lat,lng] to {lat,lng}
+
+**Kind**: global function  
+**Returns**: <code>array</code> - {lat,lng}  
+**Params**
+
+- arr <code>object</code> - [lat,lng]
+
+<a name="hm_coordO2A"></a>
+
+## hm:coordO2A(obj) ⇒ <code>array</code>
+Convert an object {lat,lng} to [lat,lng]
+
+**Kind**: global function  
+**Returns**: <code>array</code> - [lat,lng]  
+**Params**
+
+- obj <code>object</code> - {lat,lng}
+
 <a name="hm_coords2XY"></a>
 
 ## hm:coords2XY(coords) ⇒ <code>array</code>
@@ -359,6 +410,13 @@ return zoom value
 
 **Kind**: global function  
 **Returns**: <code>number</code> - zoom level  
+<a name="hm_htmlBounding"></a>
+
+## hm:htmlBounding() ⇒ <code>object</code>
+provide bounding box of element hosting map, relatve to window
+
+**Kind**: global function  
+**Returns**: <code>object</code> - {top,left,width, height} relative to window  
 <a name="hm_isoline"></a>
 
 ## hm:isoline(opt) ⇒ <code>Promise</code>
@@ -472,15 +530,17 @@ create a map area within the specified item
     - [.keyDown] <code>function</code> <code> = </code> - callback on key down : callback(key)
     - [.viewChange] <code>function</code> <code> = </code> - callback if map is panned or zoomed : callback(zoom,coordCenter)
     - [.loadTile] <code>function</code> <code> = </code> - callback when a tile is loaded : callback(z,x,y,url)
+    - [.rendered] <code>function</code> <code> = </code> - callback when render is completed : callback(event)
 
 **Example**  
 ```jsconst hm = window.heremap;hm.config({   app_id: "YOUR APP_ID",   app_code: "YOUR APP_CODE",});hm.map("map", {   zoom:5,   center: [48.8,2.3],   click: function(coord,button,key) {console.log("clicked on",coord,"with button",button);}}); ```
 <a name="hm_marker"></a>
 
-## hm:marker(opt)
+## hm:marker(opt) ⇒ <code>H.map.Marker</code>
 add a marker in a layersvg files can be created with https://editor.method.ac/
 
 **Kind**: global function  
+**Returns**: <code>H.map.Marker</code> - marker created  
 **Params**
 
 - opt <code>object</code> - options to create the marker, can be a coord directly
@@ -527,6 +587,17 @@ Place AutoSuggest@ async
 - opt <code>Object</code> - options of autosuggest
     - .search <code>String</code> - search string
     - .center <code>Coord</code> - center search around this coord
+
+<a name="hm_point2Coord"></a>
+
+## hm:point2Coord({lat,lng}) ⇒ <code>array</code>
+Convert {lat,lng} to [lat,lng]
+
+**Kind**: global function  
+**Returns**: <code>array</code> - [lat,lng]  
+**Params**
+
+- {lat,lng} <code>array</code>
 
 <a name="hm_polygon"></a>
 
@@ -686,6 +757,15 @@ Convert array of {x,y} to array of [lat,lng]
 
 - coords <code>array</code> - array of {x,y}
 
+<a name="marker_getCoord"></a>
+
+## marker:getCoord() ⇒ <code>coord</code>
+get coordinates of a marker
+
+**Kind**: global function  
+**Returns**: <code>coord</code> - [lat,lng]  
+**Example**  
+```jslet m =hm.marker([48.8,2.3]);let coord = m.getcoord(); // returns [48.8,2.3] ```
 
 * * *
 

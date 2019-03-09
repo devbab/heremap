@@ -1,5 +1,5 @@
 "use strict";
-const cm = require("common");
+const cm = require("./common.js");
 
 
 /**

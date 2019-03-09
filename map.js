@@ -1,12 +1,9 @@
-/* global H, fetch, document, navigator, mapsjs, window APP_ID_JAPAN,APP_CODE_JAPAN,APP_ID_KOREA,APP_CODE_KOREA*/
+/* global H, fetch, window, document, navigator, mapsjs, window APP_ID_JAPAN,APP_CODE_JAPAN,APP_ID_KOREA,APP_CODE_KOREA*/
 
-/**
- * @file manages map display on a web canvas
- * @author devbab
- */
 
 "use strict";
 const cm = require("./common.js");
+const g = require("./geometry.js");
 
 let _platform = null;
 let _provider = null;
@@ -21,18 +18,9 @@ let _bubbleMarker = null; // bubble de mamrker
 let _scheme = "normal.day.grey";
 let _locateMe = null; // id when locate is active
 let _htmlItem = null; //the html item on which to put the map
+let _htmlItemId = null; //the id of html item on which to put the map
 
 
-function coordO2A(obj) {
-    return [obj.lat, obj.lng];
-}
-
-function coordA2O(arr) {
-    return {
-        lat: arr[0],
-        lng: arr[1]
-    };
-}
 
 
 /**
@@ -51,6 +39,7 @@ function coordA2O(arr) {
  * @param [opt.keyDown=null] {function}  - callback on key down : callback(key)
  * @param [opt.viewChange=null] {function}  - callback if map is panned or zoomed : callback(zoom,coordCenter)
  * @param [opt.loadTile=null] {function}  - callback when a tile is loaded : callback(z,x,y,url)
+ * @param [opt.rendered=null] {function}  - callback when render is completed : callback(event)
  *
  * @example
  * ```js
@@ -71,6 +60,7 @@ function coordA2O(arr) {
 function map(htmlItem, opt) {
 
     _htmlItem = htmlItem;
+    _htmlItemId = document.getElementById(htmlItem);
 
     let settings = {
         zoom: 10,
@@ -81,6 +71,7 @@ function map(htmlItem, opt) {
         click: null,
         dbClick: null,
         viewChange: null, // (zoom,coord)
+        render: null, // ()
         loadTile: null // quand une tile est affichée
     };
 
@@ -91,7 +82,7 @@ function map(htmlItem, opt) {
 
     if (!app_id || !app_code) {
         // console.log("app_id/app_code not initialised");
-        document.getElementById(htmlItem).innerHTML = "app_id/app_code not initialised";
+        _htmlItemId.innerHTML = "app_id/app_code not initialised";
         return;
     }
 
@@ -103,7 +94,13 @@ function map(htmlItem, opt) {
     });
 
     Object.assign(settings, opt);
-    if (settings.scheme) _scheme = settings.scheme; // store scheme if defined
+    if (settings.scheme)
+        _scheme = settings.scheme; // store scheme if defined
+
+    // white background for test
+    let searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.get("demotest") == 1) _scheme = "white";
+
 
     _defaultLayers = _platform.createDefaultLayers();
 
@@ -169,7 +166,7 @@ function map(htmlItem, opt) {
     //Step 2: initialize a HEREMap 
     _map = new H.Map(document.getElementById(htmlItem),
         __layer, {
-            center: coordA2O(settings.center),
+            center: g.coordA2O(settings.center),
             zoom: settings.zoom
         });
 
@@ -233,13 +230,13 @@ function map(htmlItem, opt) {
 
         let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
         let button = ev.currentPointer.button;
-        if (settings.dbClick != "") {
+        if (settings.dbClick) {
             switch (button) {
                 case 0:
-                    settings.dbClick(coordO2A(coord), "left", _key);
+                    settings.dbClick(g.coordO2A(coord), "left", _key);
                     break;
                 case 2:
-                    settings.dbClick(coordO2A(coord), "right", _key);
+                    settings.dbClick(g.coordO2A(coord), "right", _key);
                     break;
             }
         }
@@ -255,16 +252,16 @@ function map(htmlItem, opt) {
         let button = ev.currentPointer.button;
 
         if ((button == 0) && (settings.clickLeft))
-            settings.clickLeft(coordO2A(coord), "left", _key);
+            settings.clickLeft(g.coordO2A(coord), "left", _key);
         if ((button == 2) && (settings.clickRight))
-            settings.clickRight(coordO2A(coord), "right", _key);
+            settings.clickRight(g.coordO2A(coord), "right", _key);
         if (settings.click) {
             switch (button) {
                 case 0:
-                    settings.click(coordO2A(coord), "left", _key);
+                    settings.click(g.coordO2A(coord), "left", _key);
                     break;
                 case 2:
-                    settings.click(coordO2A(coord), "right", _key);
+                    settings.click(g.coordO2A(coord), "right", _key);
                     break;
             }
         }
@@ -273,38 +270,62 @@ function map(htmlItem, opt) {
     /*********  disable the default draggability of the underlying map when starting to drag a marker object *****************/
     _map.addEventListener("dragstart", function (ev) {
         let target = ev.target;
-        if (target instanceof H.map.Marker) {
+        if (target instanceof H.map.Marker || target instanceof H.map.DomMarker) {
             _behavior.disable();
         }
+
     }, false);
 
     /************   re - enable the default draggability of the underlying map when dragging has completed ***********************/
     _map.addEventListener("dragend", function (ev) {
+
         let target = ev.target;
-        if (target instanceof mapsjs.map.Marker) {
+        if (target instanceof mapsjs.map.Marker || target instanceof mapsjs.map.DomMarker) {
             _behavior.enable();
-            if (typeof target.dragged !== "undefined") {
+
+            if (target.droppable)
+                return;
+
+            if (target.dragged) {
                 let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
-                (target.dragged)(target, coordO2A(coord));
+                (target.dragged)(target, g.coordO2A(coord));
             }
+        } else if (settings.drag) {
+            (settings.drag)("dragend");
         }
+
     }, false);
 
     /***********************  Listen to the drag event and move the position of the marker as necessary *******************/
     _map.addEventListener("drag", function (ev) {
         let target = ev.target,
             pointer = ev.currentPointer;
-        if (target instanceof mapsjs.map.Marker) {
+
+        if (target instanceof mapsjs.map.Marker || target instanceof mapsjs.map.DomMarker) {
+
+            if (target.droppable) // don't move the marker if droppable
+                return;
             target.setPosition(_map.screenToGeo(pointer.viewportX, pointer.viewportY));
+        } else if (settings.drag) {
+            (settings.drag)("drag");
         }
+
     }, false);
 
 
     /****************  detect map resize and adjust accoridngly ******************************/
     window.addEventListener("resize", function () {
         _map.getViewPort().resize();
-
     });
+
+    /****************  callback for rendering ******************************/
+    if (settings.rendered) {
+        _map.getEngine().addEventListener("render", (ev) => {
+            if (_map.getEngine() === ev.target) {
+                settings.rendered(ev);
+            }
+        });
+    }
 
     return _map;
 }
@@ -437,7 +458,7 @@ function layerFind(name) {
  *  ```
  */
 function setCenter(coord) {
-    _map.setCenter(coordA2O(coord));
+    _map.setCenter(g.coordA2O(coord));
 }
 
 /**
@@ -562,6 +583,43 @@ function getZoom() {
  */
 function setZoom(zoom) {
     _map.setZoom(zoom);
+}
+
+
+/**
+ * Display a unique bubble. Associated CSS style is .H_ib_body
+ * @alias hm:bubbleUnique
+ * @param {Array} coord of the bubble
+ * @param {String} txt html text to display
+ */
+function bubbleUnique(coord, txt) {
+
+    if (!_bubbleMarker) {
+        _bubbleMarker = new H.ui.InfoBubble(
+            g.coordA2O(coord), {
+                content: txt
+            });
+
+        _ui.addBubble(_bubbleMarker);
+        _bubbleMarker.addClass("bubbleUnique");
+
+    } else {
+        _bubbleMarker.setPosition(g.coordA2O(coord));
+        _bubbleMarker.setContent(txt);
+        _bubbleMarker.open();
+    }
+
+}
+
+
+/**
+ * hide a unique bubble
+ * @alias hm:bubbleUniqueHide
+ */
+function bubbleUniqueHide() {
+    if (!_bubbleMarker)
+        return;
+    _bubbleMarker.close();
 }
 
 
@@ -758,6 +816,9 @@ async function buildIcon(opt) {
  * @param {boolean} opt.bubble  if true, show buble on click with data
  * @param {boolean} opt.draggable  draggable marker
  * @param {function} opt.dragged  if dragged, callback(target,coord)
+ * 
+ * @return {H.map.Marker}  marker created
+ * 
  * @example 
  * ```js
  * hm.marker([48.8,2.3]);
@@ -845,7 +906,10 @@ async function marker(opt) {
     let marker = new H.map.Marker(settings.coord, markerOpt);
 
     marker.draggable = settings.draggable;
-
+    if (settings.droppable) {
+        marker.draggable = true;
+        marker.droppable = true;
+    }
     if (settings.dragged) marker.dragged = settings.dragged;
 
     if (settings.data) {
@@ -866,7 +930,7 @@ async function marker(opt) {
 
             let target = ev.target;
             let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
-            settings.pointerEnter(target, coordO2A(coord), ev);
+            settings.pointerEnter(target, g.coordO2A(coord), ev);
 
         });
     }
@@ -876,10 +940,40 @@ async function marker(opt) {
         marker.addEventListener("tap", function (ev) {
             let target = ev.target;
             let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
-            settings.pointerClick(target, coordO2A(coord), ev);
+            settings.pointerClick(target, g.coordO2A(coord), ev);
 
         });
     }
+
+    /************  callback when click on marker *****************************/
+    if (settings.droppable) {
+        marker.addEventListener("dragstart", function (ev) {
+            let offset = htmlBounding();
+            let screen = {
+                left: ev.currentPointer.viewportX + offset.left,
+                top: ev.currentPointer.viewportY + offset.top
+            };
+            settings.droppable(screen, ev, ev.type);
+        });
+        marker.addEventListener("drag", function (ev) {
+            let offset = htmlBounding();
+            let screen = {
+                left: ev.currentPointer.viewportX + offset.left,
+                top: ev.currentPointer.viewportY + offset.top
+            };
+            settings.droppable(screen, ev, ev.type);
+        });
+        marker.addEventListener("dragend", function (ev) {
+            let offset = htmlBounding();
+            let screen = {
+                left: ev.currentPointer.viewportX + offset.left,
+                top: ev.currentPointer.viewportY + offset.top
+            };
+            settings.droppable(screen, ev, ev.type);
+        });
+    }
+
+
 
     /************  show a bubble when clicking on marker *****************************/
     if (settings.bubble) {
@@ -889,50 +983,36 @@ async function marker(opt) {
             let data = target.getData();
             let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
 
-            bubbleUnique(coordO2A(coord), data);
+            bubbleUnique(g.coordO2A(coord), data);
         });
     }
+
+    if (settings.zIndex)
+        marker.setZIndex(settings.zIndex);
 
     layer.addObject(marker);
     return marker;
 
 } //end of marker
 
-/**
- * Display a unique bubble. Associated CSS style is .H_ib_body
- * @alias hm:bubbleUnique
- * @param {Array} coord of the bubble
- * @param {String} txt html text to display
- */
-function bubbleUnique(coord, txt) {
-
-    if (!_bubbleMarker) {
-        _bubbleMarker = new H.ui.InfoBubble(
-            coordA2O(coord), {
-                content: txt
-            });
-
-        _ui.addBubble(_bubbleMarker);
-        _bubbleMarker.addClass("bubbleUnique");
-
-    } else {
-        _bubbleMarker.setPosition(coordA2O(coord));
-        _bubbleMarker.setContent(txt);
-        _bubbleMarker.open();
-    }
-
-}
-
 
 /**
- * hide a unique bubble
- * @alias hm:bubbleUniqueHide
+ * get coordinates of a marker
+ * @alias marker:getCoord
+ * @return {coord}  [lat,lng]
+ * @example 
+ * ```js
+ * let m =hm.marker([48.8,2.3]);
+ *
+ * let coord = m.getcoord(); // returns [48.8,2.3]
+ * 
+ *  ```
  */
-function bubbleUniqueHide() {
-    if (!_bubbleMarker)
-        return;
-    _bubbleMarker.close();
-}
+H.map.Marker.prototype.getCoord = function () {
+    let pos = this.getPosition();
+    return g.point2Coord(pos);
+};
+
 
 
 
@@ -1027,19 +1107,19 @@ function polyline(opt) {
         polyline.addEventListener("pointerenter", function (ev) {
             let target = ev.target;
             let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
-            settings.pointerEnter(target, coordO2A(coord), ev);
+            settings.pointerEnter(target, g.coordO2A(coord), ev);
         });
     if (settings.pointerLeave)
         polyline.addEventListener("pointerleave", function (ev) {
             let target = ev.target;
             let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
-            settings.pointerLeave(target, coordO2A(coord), ev);
+            settings.pointerLeave(target, g.coordO2A(coord), ev);
         });
     if (settings.pointerClick)
         polyline.addEventListener("tap", function (ev) {
             let target = ev.target;
             let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
-            settings.pointerClick(target, coordO2A(coord), ev);
+            settings.pointerClick(target, g.coordO2A(coord), ev);
         });
 
     layer.addObject(polyline);
@@ -1119,21 +1199,21 @@ function polygon(opt) {
             let target = ev.target;
             let data = target.getData();
             let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
-            settings.pointerEnter(target, coordO2A(coord), ev, data);
+            settings.pointerEnter(target, g.coordO2A(coord), ev, data);
         });
     if (settings.pointerLeave)
         polygon.addEventListener("pointerleave", function (ev) {
             let target = ev.target;
             let data = target.getData();
             let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
-            settings.pointerLeave(target, coordO2A(coord), ev, data);
+            settings.pointerLeave(target, g.coordO2A(coord), ev, data);
         });
     if (settings.pointerClick)
         polygon.addEventListener("tap", function (ev) {
             let target = ev.target;
             let data = target.getData();
             let coord = _map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY);
-            settings.pointerClick(target, coordO2A(coord), ev, data);
+            settings.pointerClick(target, g.coordO2A(coord), ev, data);
         });
 
     layer.addObject(polygon);
@@ -1174,7 +1254,7 @@ function circle(opt) {
     }
     let circle = new H.map.Circle(
         // The central point of the circle
-        coordA2O(settings.coord),
+        g.coordA2O(settings.coord),
         // The radius of the circle in meters
         settings.radius, {
             style: settings.style
@@ -1185,7 +1265,24 @@ function circle(opt) {
     return circle;
 }
 
+/**
+ * provide bounding box of element hosting map, relatve to window
+ * @alias hm:htmlBounding
+ * @return {object} {top,left,width, height} relative to window
+ */
+function htmlBounding() {
+    let bb = _htmlItemId.getBoundingClientRect();
 
+    let top = bb.top + window.pageYOffset;
+    let left = bb.left + window.pageXOffset;
+
+    return {
+        top: top,
+        left: left,
+        width: bb.width,
+        height: bb.height
+    };
+}
 
 
 /**
@@ -1340,13 +1437,13 @@ function getUI() {
 }
 
 module.exports = {
-    coordO2A: coordO2A,
-    coordA2O: coordA2O,
     getMap: getMap,
     getUI: getUI,
     getBehavior: getBehavior,
     getMapHtmlItem: getMapHtmlItem,
     map: map,
+    buildIcon: buildIcon,
+    marker: marker,
     getAvailableMapStyle: getAvailableMapStyle,
     setScheme: setScheme,
     layerCreate: layerCreate,
@@ -1354,10 +1451,8 @@ module.exports = {
     layerDelete: layerDelete,
     layerSetVisibility: layerSetVisibility,
     layerEmpty: layerEmpty,
-    buildIcon: buildIcon,
     bubbleUnique: bubbleUnique,
     bubbleUniqueHide: bubbleUniqueHide,
-    marker: marker,
     circle: circle,
     polyline: polyline,
     polygon: polygon,
@@ -1368,6 +1463,7 @@ module.exports = {
     getViewBB: getViewBB,
     setViewBB: setViewBB,
     locateMe: locateMe,
-    screenshot: screenshot
+    screenshot: screenshot,
+    htmlBounding: htmlBounding
 
 };

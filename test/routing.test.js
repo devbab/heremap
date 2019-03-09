@@ -1,5 +1,5 @@
 const r = require("../routing.js");
-const cm = require("common");
+const cm = require("../common.js");
 const c = require("./credentials.js"); // Specifies the credentials APP_ID, APP_CODE
 
 cm.config({

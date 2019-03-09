@@ -15,7 +15,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Demo cluster",
-            "url": "https://devbab/github/heremap/demo/demo-cluster.html",
+            "url": "https://devbab/github/heremap/demo/demo-cluster.html?demotest=1",
             "sourceMaps": true,
             "webRoot": "${workspaceFolder}"
         },

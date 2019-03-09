@@ -79,9 +79,13 @@
                     },
                     keydown: (key) => {
                         console.log("key down", key)
+                    },
+                    rendered: (ev) => {
+                        console.log("rendered", ev)
                     }
                 }
             );
+
 
         };
 
@@ -120,6 +124,8 @@
                     else
                         hm.bubbleUnique(coord, "weight: " + weight);
                 });
+
+
         }
 
         initMap();
@@ -127,9 +133,6 @@
 
         function show() {
             hm.clusterShow();
-            let stat = hm.clusterGetStat();
-            console.log("stat Cluster", stat);
-
         }
 
         function hide() {

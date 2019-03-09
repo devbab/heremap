@@ -58,7 +58,10 @@
             hm.map(
                 "map", {
                     center: [latm, (lngm + lngM) / 2],
-                    zoom: 10
+                    zoom: 10,
+                    rendered: (ev) => {
+                        console.log("rendered", ev)
+                    }
                 }
             );
 
