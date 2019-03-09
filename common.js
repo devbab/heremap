@@ -45,8 +45,8 @@ if (process.browser) {
  *  hm.config({
  *      app_id: "YOUR APP_ID",
  *      app_code: "YOUR APP_CODE",
-*   });
-*  ```
+ *   });
+ *  ```
  */
 function config(opt) {
     if (opt.app_id) APP_ID = opt.app_id;
@@ -79,7 +79,7 @@ function getHome() {
  * @ignore
  *  @alias hm:getAppId
  * @return {string} app_id
-*/
+ */
 function getAppId() {
     return APP_ID;
 }
@@ -89,8 +89,8 @@ function getAppId() {
  *  @ignore
  *  @alias hm:getHome
  *  @alias hm:getAppCode
-  * @return {string} app_code
-*/
+ * @return {string} app_code
+ */
 function getAppCode() {
     return APP_CODE;
 }
@@ -100,7 +100,7 @@ function getAppCode() {
  * @ignore
  * @alias hm:getCIT
  * @return {booolean} true if using CIT
-*/
+ */
 function getCIT() {
     return CIT;
 }
@@ -110,7 +110,7 @@ function getCIT() {
  * @ignore
  * @alias hm:getProtocol
  * @return {string} - protocol
-*/
+ */
 function getProtocol() {
     return PROTOCOL;
 }
@@ -120,14 +120,14 @@ function getProtocol() {
  * @ignore
  *  @alias hm:useHTTPS
  * @return {boolean} - true if https is used
-*/
+ */
 function useHTTPS() {
     return _useHTTPS;
 }
 
 /**
  * add credentials to object provided
-  * @ignore
+ * @ignore
  *  @alias hm:addCredentials
  * @param  {...objects} list of `objects` 
  * @return {object} object with all input objectconcatenated, and app_id/app_code inserted
@@ -190,6 +190,9 @@ async function hereRest(url, settings, mode = "get", needresp = "true") {
             return res;
         });
 }
+
+
+
 
 module.exports = {
     config: config,

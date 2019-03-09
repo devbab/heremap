@@ -1,7 +1,7 @@
 /* global H, document, Image */
 "use strict";
-const cm = require("common");
-const m = require("map");
+const cm = require("./common.js");
+const m = require("./map.js");
 
 // map on which to add the cluster layer
 let map = null;

@@ -12,6 +12,7 @@ Object.assign(modules, require("./routing.js"));
 Object.assign(modules, require("./geocoding.js"));
 Object.assign(modules, require("./place.js"));
 
+// only added in case of browser library
 if (process.browser) {
     Object.assign(modules, require("./map.js"));
     Object.assign(modules, require("./cluster.js"));
