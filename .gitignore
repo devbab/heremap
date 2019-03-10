@@ -8,3 +8,4 @@ test.js
 jsdoc/
 .vscode/
 ./heremap.min.js
+./package-lock.json
