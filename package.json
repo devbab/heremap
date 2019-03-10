@@ -35,16 +35,16 @@
     "homepage": "https://github.com/devbab/heremap#readme",
     "dependencies": {
         "@turf/angle": "^6.0.1",
-        "jsdoc-to-markdown": "^4.0.1",
         "simplify-js": "^1.2.3",
-        "superagent": "^4.1.0",
-        "turf": "^3.0.14"
+        "superagent": "^4.1.0"
     },
     "devDependencies": {
         "eslint": "^5.12.1",
         "eslint-config-strongloop": "^2.1.0",
         "jest": "^23.6.0",
         "jest-cli": "^23.6.0",
+        "jest-image-snapshot": "^2.8.1",
+        "jsdoc-to-markdown": "^4.0.1",
         "puppeteer": "^1.11.0",
         "uglify-es": "^3.3.9"
     }
