@@ -39,10 +39,11 @@
         "superagent": "^4.1.0"
     },
     "devDependencies": {
+        "braces": ">=2.3.1",
         "eslint": "^5.16.0",
         "eslint-config-strongloop": "^2.1.0",
-        "jest": "^23.6.0",
-        "jest-cli": "^23.6.0",
+        "jest": "^25.3.0",
+        "jest-cli": "^25.3.0",
         "jest-image-snapshot": "^2.8.1",
         "jsdoc-to-markdown": "^5.0.3",
         "puppeteer": "^1.11.0",
