@@ -1,0 +1,73 @@
+# HEREMAP
+A framework to simplify the use of HERE Maps, which a bunch of higher level functions.
+In addition, it brings  geocoding and routing functions to Node.js
+
+See examples in the demo directory, starting with demo/demo-basic.html.
+
+Get your credentials at [http://developer.here.com](http://developer.here.com)
+
+## Installation
+
+1/ For use in Node.js, install the package:
+
+npm install --save-dep heremap
+
+To use in a js file
+
+	const hm = require("heremap");
+
+	hm.config({
+		app_id: YOUR APP_ID,
+		app_code: YOUR APP_CODE,
+	});
+
+	let res = await hm.geocode("avenue des champs elysees, paris);
+	console.log(res.coord);
+
+
+2/ For use in browser, add these lines in your html file
+
+	<link rel="stylesheet" type="text/css" href="http://www.unpkg.com/heremap@{version}/css/heremap.css" />
+
+	<script src="http://www.unpkg.com/heremap@{version}/dist/libhere.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://www.unpkg.com/heremap@{version}/dist/heremap.min.js" type="text/javascript" charset="utf-8"></script>
+
+	<div id="map"></div>
+
+Then in your JS script:
+
+	const hm = window.heremap;
+
+	hm.config({
+		app_id: YOUR APP_ID,
+		app_code: YOUR APP_CODE,
+	});
+
+	hm.map("map", {
+		zoom:5,
+		center: [48.8,2.3],
+		click: function(coord,button,key) {console.log("clicked on",coord,"with button",button);}
+	});
+
+
+## Demo
+
+See under directory [demo](demo):
+
+- [demo-basic.html](demo/demo-basic.html): how to display a simple map in a web pgae
+- [demo-cluster.html](demo/demo-cluster.html): how to cluster thousands of points on a map
+- [demo-markers.html](demo/demo-markers.html): different kind of svg or png markers, with different size, anchor..
+- [demo-screenshot.html](demo/demo-screenshot.html): how to do a screenshot of the map
+- [demo-asia.html](demo/demo-asia.html): how to display high quality ap in Japan and Korea. (requires special credentials)
+- [demo-autocomplete.html](demo/demo-autocomplete.html): autocomplete exemple
+- [demo-touch.html](demo/demo-touch.html): draw a polyline on a touch screen
+- [demo-nearcity.html](demo/demo-nearcity.html): find big cities around the mouse click
+- [demo-locateme.html](demo/demo-locateme.html): display own location 
+ 
+
+
+{{>main}}
+
+* * *
+
+&copy; 2018-2019 devbab

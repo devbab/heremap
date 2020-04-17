@@ -17,8 +17,8 @@ To use in a js file
 	const hm = require("heremap");
 
 	hm.config({
-		app_id: "YOUR APP_ID",
-		app_code: "YOUR APP_CODE",
+		app_id: YOUR APP_ID,
+		app_code: YOUR APP_CODE,
 	});
 
 	let res = await hm.geocode("avenue des champs elysees, paris);
@@ -27,10 +27,10 @@ To use in a js file
 
 2/ For use in browser, add these lines in your html file
 
-	<link rel="stylesheet" type="text/css" href="http://www.unpkg.com/heremap@2.1.2/css/heremap.css" />
+	<link rel="stylesheet" type="text/css" href="http://www.unpkg.com/heremap@2.1.3/css/heremap.css" />
 
-	<script src="http://www.unpkg.com/heremap@2.1.2/dist/libhere.min.js" type="text/javascript" charset="utf-8"></script>
-	<script src="http://www.unpkg.com/heremap@2.1.2/dist/heremap.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://www.unpkg.com/heremap@2.1.3/dist/libhere.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://www.unpkg.com/heremap@2.1.3/dist/heremap.min.js" type="text/javascript" charset="utf-8"></script>
 
 	<div id="map"></div>
 
@@ -39,8 +39,8 @@ Then in your JS script:
 	const hm = window.heremap;
 
 	hm.config({
-		app_id: "YOUR APP_ID",
-	app_code: "YOUR APP_CODE",
+		app_id: YOUR APP_ID,
+		app_code: YOUR APP_CODE,
 	});
 
 	hm.map("map", {
