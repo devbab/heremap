@@ -101,6 +101,15 @@ function map(htmlItem, opt) {
     let searchParams = new URLSearchParams(window.location.search);
     if (searchParams.get("demotest") == 1) _scheme = "white";
 
+    let _type= _scheme.split(".");
+    let _base="normal";
+    switch (_type[0]) {
+        case "terrain":
+            case "satellite":
+                case "hybrid":
+                        _base = "aerial";
+    }
+
 
     _defaultLayers = _platform.createDefaultLayers();
 
@@ -114,7 +123,7 @@ function map(htmlItem, opt) {
         getURL: function (col, row, level) {
             mps++;
             if (mps > 4) mps = 1;
-            let url = [cm.getProtocol(), "//", mps, ".base.maps" + cm.getCIT() + ".api.here.com/maptile/", "2.1",
+            let url = [cm.getProtocol(), "//", mps, ".",_base,".maps" + cm.getCIT() + ".api.here.com/maptile/", "2.1",
                 "/", "maptile", "/", "newest", "/",
                 _scheme, "/", level, "/", col, "/", row, "/", "256",
                 "/", "png", "?lg=", "FRE",
@@ -333,7 +342,7 @@ function map(htmlItem, opt) {
 /**
  * list of all available map styles normal.day, night.... 
  * @alias hm:getAvailableMapStyle
- * @return {json} list of map styles as json
+ * @return {promise} promise with array of {maps,scheme,}
  */
 function getAvailableMapStyle() {
     // https://1.base.maps.api.here.com/maptile/2.1/info?xnlp=CL_JSMv3.0.17.0&app_id=nOSh21214JFMSEPQkqno&app_code=rX_l7YvALtNkqU2bx5FWEA&output=json
@@ -342,11 +351,24 @@ function getAvailableMapStyle() {
         output: "json"
     });
 
-    const url = cm.buildUrl("1.base.maps", "api.here.com/maptile/2.1/info");
-    return cm.hereRest(url, settings)
+    let url = cm.buildUrl("1.base.maps", "api.here.com/maptile/2.1/info");
+
+    const p1 = cm.hereRest(url, settings)
         .then(res => {
             return res.body.response;
         });
+
+    url = cm.buildUrl("1.aerial.maps", "api.here.com/maptile/2.1/info");
+    const p2 = cm.hereRest(url, settings)
+        .then(res => {
+            return res.body.response;
+        });
+
+    return Promise.all([p1, p2]).then(res => {
+        console.log("Promise all ",res);
+        return res;
+    });
+
 }
 
 /**
