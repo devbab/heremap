@@ -1,18 +1,19 @@
 {
     "name": "heremap",
-    "version": "2.1.3",
+    "version": "2.1.4",
     "description": "node/browser interface to HERE Maps REST API",
     "main": "heremap.js",
     "unpkg": "dist/heremap.min.js",
+    "libhere": "libhere/3.0.17.0",
     "source": "./heremap.js ./common.js ./geometry.js ./map.js ./routing.js ./geocoding.js ./cluster.js ./touch.js ./place.js",
     "scripts": {
         "jest": "jest",
         "eslint": "eslint --ignore-path .eslintignore .",
         "cleandemo": "node demo/cleandemo.js",
         "docs": "node jsdoc/jsmydoc.js  %npm_package_source%",
-        "lib": "browserify  -r %npm_package_source%  -s heremap | uglifyjs -c -o dist/heremap.min.js",
-        "libdebug": "browserify  -r %npm_package_source% -s heremap -d -o heremap.min.js",
-        "here": "uglifyjs lib/mapsjs-core.js lib/mapsjs-service.js lib/mapsjs-mapevents.js lib/mapsjs-ui.js lib/mapsjs-clustering.js  -c --source-map -o dist/libhere.min.js",
+        "lib": "browserify  -r ./heremap.js  -s heremap | uglifyjs -c -o dist/heremap.min.js",
+        "libdebug": "browserify  -r ./heremap.js  -s heremap -d -o heremap.min.js",
+        "here": "uglifyjs %npm_package_libhere%/mapsjs-core.js %npm_package_libhere%/mapsjs-service.js %npm_package_libhere%/mapsjs-mapevents.js %npm_package_libhere%/mapsjs-ui.js %npm_package_libhere%/mapsjs-clustering.js  -c --source-map -o dist/libhere.min.js",
         "masterbuild": "npm run eslint && npm run cleandemo && npm run lib && npm run docs"
     },
     "repository": {
@@ -35,6 +36,7 @@
     "homepage": "https://github.com/devbab/heremap#readme",
     "dependencies": {
         "braces": ">=2.3.1",
+        "path": "^0.12.7",
         "simplify-js": "^1.2.3",
         "superagent": "^4.1.0"
     },

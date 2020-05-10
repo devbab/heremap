@@ -7,6 +7,7 @@
  */
 
 const request = require("superagent");
+const path = require("path");
 
 // by default, unless specified fby calling config
 // environment usable with node
@@ -15,18 +16,19 @@ let APP_CODE = process.env.APP_CODE;
 let CIT = ""; // production by default
 let PROTOCOL = "https:"; // by default
 let _useHTTPS = true; // by default
-let _home = ".";
+let _home = "./";
 
 
 // find out where we are and relative position for png/svg files
 // pay attention if library is build in ./dist
 if (process.browser) {
-    let _script = document.getElementsByTagName("script");
-    let _file = _script[_script.length - 1].src;
-    let _path = _file.substring(0, _file.lastIndexOf("/"));
-    let pos = _path.indexOf("heremap");
-    _home = _path.substring(0, pos + "heremap".length) + "/";
-
+    let _scripts = document.getElementsByTagName("script");
+    const len = _scripts.length - 1;
+    for (let i = 0; i < len; i++) {
+        const src = _scripts[i].src;
+        const file = path.basename(src);
+        if (file == "libhere.min.js") _home = path.dirname(src)+"/";
+    }
 }
 
 /**

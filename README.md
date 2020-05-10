@@ -27,10 +27,10 @@ To use in a js file
 
 2/ For use in browser, add these lines in your html file
 
-	<link rel="stylesheet" type="text/css" href="http://www.unpkg.com/heremap@2.1.3/css/heremap.css" />
+	<link rel="stylesheet" type="text/css" href="http://www.unpkg.com/heremap@2.1.4/css/heremap.css" />
 
-	<script src="http://www.unpkg.com/heremap@2.1.3/dist/libhere.min.js" type="text/javascript" charset="utf-8"></script>
-	<script src="http://www.unpkg.com/heremap@2.1.3/dist/heremap.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://www.unpkg.com/heremap@2.1.4/dist/libhere.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://www.unpkg.com/heremap@2.1.4/dist/heremap.min.js" type="text/javascript" charset="utf-8"></script>
 
 	<div id="map"></div>
 
@@ -769,4 +769,4 @@ get coordinates of a marker
 
 * * *
 
-&copy; 2018-2019 devbab
+&copy; 2018-2020 devbab

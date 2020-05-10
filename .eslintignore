@@ -1,5 +1,5 @@
 dist/*.js
-lib/*.js
+libhere/*/*.js
 demo/*.js
 test/*.js
 svg/*

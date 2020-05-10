@@ -18,5 +18,6 @@ if (process.browser) {
     Object.assign(modules, require("./cluster.js"));
     Object.assign(modules, require("./touch.js"));
 }
+
 // export all the above
 module.exports = modules;
