@@ -2,7 +2,8 @@ node_modules/
 test/credentials.js
 test/__image_snapshots__/
 demo/.vscode/
-lib/
+libhere/*
+libhere/*/*
 demo/credentials.js
 test.js
 .vscode/
