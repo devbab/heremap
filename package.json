@@ -1,6 +1,6 @@
 {
     "name": "heremap",
-    "version": "2.1.4",
+    "version": "2.1.5",
     "description": "node/browser interface to HERE Maps REST API",
     "main": "heremap.js",
     "unpkg": "dist/heremap.min.js",

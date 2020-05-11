@@ -41,6 +41,8 @@ let _htmlItemId = null; //the id of html item on which to put the map
  * @param [opt.loadTile=null] {function}  - callback when a tile is loaded : callback(z,x,y,url)
  * @param [opt.rendered=null] {function}  - callback when render is completed : callback(event)
  *
+ * to find all schemes, use hm:getAvailableMapStyle()
+ * 
  * @example
  * ```js
  * const hm = window.heremap;
@@ -53,6 +55,7 @@ let _htmlItemId = null; //the id of html item on which to put the map
  * hm.map("map", {
  *    zoom:5,
  *    center: [48.8,2.3],
+ *    scheme: "satellite.day",
  *    click: function(coord,button,key) {console.log("clicked on",coord,"with button",button);}
  * });
 *  ```
@@ -101,13 +104,13 @@ function map(htmlItem, opt) {
     let searchParams = new URLSearchParams(window.location.search);
     if (searchParams.get("demotest") == 1) _scheme = "white";
 
-    let _type= _scheme.split(".");
-    let _base="normal";
+    let _type = _scheme.split(".");
+    let _base = "base";
     switch (_type[0]) {
         case "terrain":
-            case "satellite":
-                case "hybrid":
-                        _base = "aerial";
+        case "satellite":
+        case "hybrid":
+            _base = "aerial";
     }
 
 
@@ -123,7 +126,7 @@ function map(htmlItem, opt) {
         getURL: function (col, row, level) {
             mps++;
             if (mps > 4) mps = 1;
-            let url = [cm.getProtocol(), "//", mps, ".",_base,".maps" + cm.getCIT() + ".api.here.com/maptile/", "2.1",
+            let url = [cm.getProtocol(), "//", mps, ".", _base, ".maps" + cm.getCIT() + ".api.here.com/maptile/", "2.1",
                 "/", "maptile", "/", "newest", "/",
                 _scheme, "/", level, "/", col, "/", row, "/", "256",
                 "/", "png", "?lg=", "FRE",
@@ -355,18 +358,17 @@ function getAvailableMapStyle() {
 
     const p1 = cm.hereRest(url, settings)
         .then(res => {
-            return res.body.response;
+            return res.body.response.schemes.scheme;
         });
 
     url = cm.buildUrl("1.aerial.maps", "api.here.com/maptile/2.1/info");
     const p2 = cm.hereRest(url, settings)
         .then(res => {
-            return res.body.response;
+            return res.body.response.schemes.scheme;
         });
 
     return Promise.all([p1, p2]).then(res => {
-        console.log("Promise all ",res);
-        return res;
+        return [...res[0], ...res[1]];
     });
 
 }

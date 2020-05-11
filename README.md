@@ -27,10 +27,10 @@ To use in a js file
 
 2/ For use in browser, add these lines in your html file
 
-	<link rel="stylesheet" type="text/css" href="http://www.unpkg.com/heremap@2.1.4/css/heremap.css" />
+	<link rel="stylesheet" type="text/css" href="http://www.unpkg.com/heremap@2.1.5/css/heremap.css" />
 
-	<script src="http://www.unpkg.com/heremap@2.1.4/dist/libhere.min.js" type="text/javascript" charset="utf-8"></script>
-	<script src="http://www.unpkg.com/heremap@2.1.4/dist/heremap.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://www.unpkg.com/heremap@2.1.5/dist/libhere.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://www.unpkg.com/heremap@2.1.5/dist/heremap.min.js" type="text/javascript" charset="utf-8"></script>
 
 	<div id="map"></div>
 
@@ -111,7 +111,7 @@ See under directory [demo](demo):
 <dt><a href="#hm_geocode">hm:geocode(address)</a> ⇒ <code>Promise</code></dt>
 <dd><p>geocode an address</p>
 </dd>
-<dt><a href="#hm_getAvailableMapStyle">hm:getAvailableMapStyle()</a> ⇒ <code>json</code></dt>
+<dt><a href="#hm_getAvailableMapStyle">hm:getAvailableMapStyle()</a> ⇒ <code>promise</code></dt>
 <dd><p>list of all available map styles normal.day, night....</p>
 </dd>
 <dt><a href="#hm_getCenter">hm:getCenter()</a> ⇒ <code>coord</code></dt>
@@ -384,11 +384,11 @@ geocode an address
 ```jsconst res = await hm.geocode("avenue des chaps elysees, paris");console.log (res.coord);```
 <a name="hm_getAvailableMapStyle"></a>
 
-## hm:getAvailableMapStyle() ⇒ <code>json</code>
+## hm:getAvailableMapStyle() ⇒ <code>promise</code>
 list of all available map styles normal.day, night....
 
 **Kind**: global function  
-**Returns**: <code>json</code> - list of map styles as json  
+**Returns**: <code>promise</code> - promise with array of {maps,scheme,}  
 <a name="hm_getCenter"></a>
 
 ## hm:getCenter() ⇒ <code>coord</code>
@@ -530,10 +530,10 @@ create a map area within the specified item
     - [.keyDown] <code>function</code> <code> = </code> - callback on key down : callback(key)
     - [.viewChange] <code>function</code> <code> = </code> - callback if map is panned or zoomed : callback(zoom,coordCenter)
     - [.loadTile] <code>function</code> <code> = </code> - callback when a tile is loaded : callback(z,x,y,url)
-    - [.rendered] <code>function</code> <code> = </code> - callback when render is completed : callback(event)
+    - [.rendered] <code>function</code> <code> = </code> - callback when render is completed : callback(event)to find all schemes, use hm:getAvailableMapStyle()
 
 **Example**  
-```jsconst hm = window.heremap;hm.config({   app_id: "YOUR APP_ID",   app_code: "YOUR APP_CODE",});hm.map("map", {   zoom:5,   center: [48.8,2.3],   click: function(coord,button,key) {console.log("clicked on",coord,"with button",button);}}); ```
+```jsconst hm = window.heremap;hm.config({   app_id: "YOUR APP_ID",   app_code: "YOUR APP_CODE",});hm.map("map", {   zoom:5,   center: [48.8,2.3],   scheme: "satellite.day",   click: function(coord,button,key) {console.log("clicked on",coord,"with button",button);}}); ```
 <a name="hm_marker"></a>
 
 ## hm:marker(opt) ⇒ <code>H.map.Marker</code>
